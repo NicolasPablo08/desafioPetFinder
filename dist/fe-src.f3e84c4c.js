@@ -839,6 +839,7 @@ function inputComp() {
             });
             const container = document.createElement("div");
             const nameAttribute = this.getAttribute("name");
+            const variant = this.getAttribute("variant");
             const label = document.createElement("label");
             label.style.fontSize = "16px";
             label.style.fontWeight = "400";
@@ -847,8 +848,15 @@ function inputComp() {
             const input = document.createElement("input");
             input.setAttribute("name", nameAttribute);
             const style = document.createElement("style");
+            if (variant === "black") {
+                input.style.backgroundColor = "#4A5553";
+                input.style.color = "#fff";
+                label.style.color = "#fff";
+                container.style.backgroundColor = "#000";
+            }
             style.textContent = `
       input {
+			box-sizing: border-box;
       margin:0;
       padding:0;
       width: 100%;
