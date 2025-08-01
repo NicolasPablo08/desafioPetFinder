@@ -1,0 +1,23 @@
+{
+	"name": "desafiopetfinder",
+	"version": "1.0.0",
+	"scripts": {
+		"dev:be": "nodemon --watch ./be-src/server.ts --exec ts-node ./be-src/server.ts",
+		"dev:fe": "parcel serve ./fe-src/index.html"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@vaadin/router": "^2.0.0",
+		"express": "^5.1.0",
+		"parcel": "^2.15.4",
+		"pg": "^8.16.3",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.37.7"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.10"
+	}
+}
