@@ -15,7 +15,7 @@ export function buttonComp() {
 			style.innerHTML = `
       .button{
       margin: 0;
-      padding: 0;
+      padding: 0 20px;
       width: 100%;
       height:50px;
       border-radius:4px;

@@ -29,7 +29,8 @@ export function textComp() {
 			style.innerHTML = `
       .principal{
       font-family: "poppins";
-      color: #000000;
+			margin:0;
+			padding:0;
       }
       .title{
       font-size: 36px;
