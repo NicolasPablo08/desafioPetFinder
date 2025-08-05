@@ -10,9 +10,10 @@ export function cardComp() {
 			const style = document.createElement("style");
 			const variant = this.getAttribute("variant");
 			div.classList.add("card");
-			let petImg; //remplazar
-			let petName = "Bobby"; //remplazar
-			let petLocation = "Buenos Aires, Argentina"; //remplazar
+			const petImgUrl = this.getAttribute("petImgUrl"); //remplazar
+			const petName = this.getAttribute("petName") || "Bobby"; //remplazar
+			const petLocation =
+				this.getAttribute("petLocation") || "Buenos Aires, Argentina"; //remplazar
 			let btnType;
 			let btnText;
 			if (variant === "edit") {
@@ -24,7 +25,7 @@ export function cardComp() {
 			}
 			div.innerHTML = `
       <div class="img-container">
-        <img class="card-img" src=${petImg} alt="Card Image">
+        <img class="card-img" src=${petImgUrl} alt="Card Image">
       </div>
       <div class="card-container">
         <div class="card-data">
@@ -78,6 +79,8 @@ export function cardComp() {
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+			const buttonCard = shadow.querySelector(".card-btn");
+			buttonCard.dispatchEvent(new Event("click"));
 		}
 	}
 	customElements.define("card-comp", CardComp);

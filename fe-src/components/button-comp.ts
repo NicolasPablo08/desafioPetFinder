@@ -39,6 +39,10 @@ export function buttonComp() {
       `;
 			shadow.appendChild(style);
 			shadow.appendChild(buttonEl);
+			//enviamos a quien corresponda cuando se haga un click
+			// shadow.querySelector(".button").addEventListener("click", () => {
+			// 	this.dispatchEvent(new CustomEvent("click"));
+			// });
 		}
 	}
 	customElements.define("button-comp", ButtonComp);

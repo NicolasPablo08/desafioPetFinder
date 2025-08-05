@@ -1,17 +1,17 @@
 export function headerComp() {
-  class HeaderComp extends HTMLElement {
-    constructor() {
-      super();
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      div.classList.add("header-container");
-      const style = document.createElement("style");
-      const imageSrc = "/icon-header.bd0bc3f3.png"; //no se porque tuve que poner esa ruta y extemsion
-      const userMail = "emailDelUser@gmail.com"; //remplazar con el email del usuario logueado
-      div.innerHTML = `
+	class HeaderComp extends HTMLElement {
+		constructor() {
+			super();
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			div.classList.add("header-container");
+			const style = document.createElement("style");
+			const imageSrc = require("url:../icons/icon-header.png");
+			const userMail = "emailDelUser@gmail.com"; //remplazar con el email del usuario logueado
+			div.innerHTML = `
 			<div class= "header__logo-container">
 				<img class="logo" src=${imageSrc} alt="">
 			</div>
@@ -31,7 +31,7 @@ export function headerComp() {
 				</div>	
 			</div>	
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
 			.header-container {
 			padding: 0 20px;
 			max-width: 100%;
@@ -67,6 +67,7 @@ export function headerComp() {
 				bottom: 5px;
 			}
 			.menu-window{
+			box-sizing: border-box;
 			padding: 25px 25px 50px 25px;
 			background-color: #26302E;
 			width: 100%;
@@ -126,19 +127,19 @@ export function headerComp() {
 			}	
 			`;
 
-      shadow.appendChild(style);
-      shadow.appendChild(div);
+			shadow.appendChild(style);
+			shadow.appendChild(div);
 
-      const btnMenuOpen = shadow.querySelector(".menu__button-open");
-      const menuWindow = shadow.querySelector(".menu-window");
-      const btnMenuClose = shadow.querySelector(".menu__button-close");
-      btnMenuClose.addEventListener("click", () => {
-        menuWindow.style.display = "none";
-      });
-      btnMenuOpen.addEventListener("click", () => {
-        menuWindow.style.display = "flex";
-      });
-    }
-  }
-  customElements.define("header-comp", HeaderComp);
+			const btnMenuOpen = shadow.querySelector(".menu__button-open");
+			const menuWindow = shadow.querySelector(".menu-window");
+			const btnMenuClose = shadow.querySelector(".menu__button-close");
+			btnMenuClose.addEventListener("click", () => {
+				menuWindow.style.display = "none";
+			});
+			btnMenuOpen.addEventListener("click", () => {
+				menuWindow.style.display = "flex";
+			});
+		}
+	}
+	customElements.define("header-comp", HeaderComp);
 }
