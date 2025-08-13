@@ -8,7 +8,7 @@ export function homePage() {
 			const shadow = this.attachShadow({ mode: "open" });
 			const div = document.createElement("div");
 			const style = document.createElement("style");
-			const imageSrc = require("url:../icons/icon-home.png");
+			const imageSrc = require("url:../../icons/icon-home.png");
 			div.classList.add("home__container");
 			div.innerHTML = `
 				<div class="home-img">

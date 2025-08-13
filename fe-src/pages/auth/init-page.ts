@@ -1,16 +1,16 @@
 export function initPage() {
-  class InitPage extends HTMLElement {
-    constructor() {
-      super();
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      const style = document.createElement("style");
-      const imageSrc = require("url:../icons/icon-login.png");
-      div.classList.add("init__container");
-      div.innerHTML = `
+	class InitPage extends HTMLElement {
+		constructor() {
+			super();
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			const style = document.createElement("style");
+			const imageSrc = require("url:../../icons/icon-login.png");
+			div.classList.add("init__container");
+			div.innerHTML = `
 				<div class="init-img">
 					<img class="img" src="${imageSrc}">
 				</div>
@@ -27,7 +27,7 @@ export function initPage() {
           <a class="register-text" href=""> Registrate</a>
         </div>
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
       .init__container{
         height: 100%;
         max-width: 100%;
@@ -67,18 +67,18 @@ export function initPage() {
       text-decoration: none;
       }  
       `;
-      shadow.appendChild(div);
-      shadow.appendChild(style);
+			shadow.appendChild(div);
+			shadow.appendChild(style);
 
-      const form = shadow.querySelector(".init-form");
-      const inputForm = shadow.querySelector(".input-email");
-      const buttonForm = shadow.querySelector(".button-form");
-      buttonForm.addEventListener("click", (e) => {
-        e.preventDefault();
-        const email = inputForm.shadowRoot.querySelector("input").value;
-        console.log(email);
-      });
-    }
-  }
-  customElements.define("init-page", InitPage);
+			const form = shadow.querySelector(".init-form");
+			const inputForm = shadow.querySelector(".input-email");
+			const buttonForm = shadow.querySelector(".button-form");
+			buttonForm.addEventListener("click", (e) => {
+				e.preventDefault();
+				const email = inputForm.shadowRoot.querySelector("input").value;
+				console.log(email);
+			});
+		}
+	}
+	customElements.define("init-page", InitPage);
 }

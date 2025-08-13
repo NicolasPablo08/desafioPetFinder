@@ -1,5 +1,6 @@
 body {
 	box-sizing: border-box;
+	height: 100vh;
 	background: linear-gradient(to bottom, #ffffff, #def4f0);
 	margin: 0;
 	padding: 0;

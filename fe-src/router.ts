@@ -12,4 +12,7 @@ router.setRoutes([
 	{ path: "/perfil", component: "perfil-page" },
 	{ path: "/datos", component: "mis-datos-page" },
 	{ path: "/pass", component: "mi-pass-page" },
+	{ path: "/report", component: "report-page" },
+	{ path: "/edit-report", component: "edit-report-page" },
+	{ path: "/mis-reports", component: "mis-reports-page" },
 ]);
