@@ -1,3 +1,5 @@
+import { state } from "../state";
+import { Router } from "@vaadin/router";
 export function reportPage() {
 	class ReportPage extends HTMLElement {
 		constructor() {

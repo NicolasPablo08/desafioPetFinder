@@ -1,8 +1,14 @@
+import { state } from "../state";
+import { Router } from "@vaadin/router";
 export function misReportsPage() {
 	class MisReportsPage extends HTMLElement {
 		constructor() {
 			super();
 			this.render();
+		}
+		getMyReports() {
+			const petsUser = state.getState().petsUser;
+			return petsUser;
 		}
 		render() {
 			const shadow = this.attachShadow({ mode: "open" });
@@ -11,12 +17,7 @@ export function misReportsPage() {
 			div.classList.add("container");
 			const imagenEmptyReport = require("url:../icons/icon-misReports.png");
 			//esta info debe venir del state, por ahora sirve para maquetar
-			const petsInfo = [
-				// { name: "beto", location: "cipolletti,rn" },
-				// { name: "coki", location: "neuquen, nqn" },
-				// { name: "uri", location: "plottier, nqn" },
-				// { name: "micho", location: "allen, rn" },
-			];
+			const petsInfo = this.getMyReports();
 			div.innerHTML = `
         <div class="text">
           <text-comp class="text-title" variant="subtitleBold">Mascotas</text-comp>
@@ -25,7 +26,8 @@ export function misReportsPage() {
 				<div class="container-cards">
 					${petsInfo
 						.map((pet) => {
-							return `<card-comp class="card"petName="${pet.name}" petLocation="${pet.location}" petImgUrl ="" variant="edit"></card-comp>`;
+							//agregamos el id como un dato dentro del card
+							return `<card-comp class="card" data-id="${pet.petId}" petName="${pet.name}" petLocation="${pet.location}" petImgUrl ="${pet.imageUrl}" variant="edit"></card-comp>`;
 						})
 						.join("")}
 				</div>
@@ -33,7 +35,7 @@ export function misReportsPage() {
             <text-comp class="text-body" variant="text">Aún no reportaste mascotas perdidas</text-comp>
             <img class="img" src="${imagenEmptyReport}">
         </div>
-        <button-comp class="button" variant="blue">Publicar reporte</button-comp>    
+        <button-comp class="button" variant="blue">Nuevo reporte</button-comp>    
             `;
 			style.innerHTML = `
         .container{
@@ -78,7 +80,6 @@ export function misReportsPage() {
 			const emptyReport = shadow.querySelector(".empty-report");
 			if (petsInfo.length > 0) {
 				emptyReport.style.display = "none";
-				return petsInfo;
 			} else {
 				emptyReport.style.display = "flex";
 			}
@@ -86,12 +87,13 @@ export function misReportsPage() {
 			const editButtons = shadow.querySelectorAll(".card");
 			editButtons.forEach((edit) => {
 				edit.addEventListener("click", () => {
-					console.log("soy edit card");
+					const petId = edit.getAttribute("data-id"); // Obtener el ID de la mascota
+					Router.go(`/edit-report/${petId}`); //enviamos el id dentro de la url
 				});
 			});
 			const reportButton = shadow.querySelector(".button");
 			reportButton.addEventListener("click", () => {
-				console.log("soy report button");
+				Router.go("/report");
 			});
 		}
 	}

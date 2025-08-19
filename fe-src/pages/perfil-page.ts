@@ -1,3 +1,4 @@
+import { Router } from "@vaadin/router";
 export function perfilPage() {
 	class PerfilPage extends HTMLElement {
 		constructor() {
@@ -8,15 +9,15 @@ export function perfilPage() {
 			const shadow = this.attachShadow({ mode: "open" });
 			const div = document.createElement("div");
 			const style = document.createElement("style");
-			const imageSrc = require("url:../icons/icon-home.png");
 			div.classList.add("container");
 			div.innerHTML = `
 				<div class="text">
 					<text-comp class="text-title" variant="title">Mis datos</text-comp>		
 				</div>
 				<div class="buttons">
-					<button-comp class="button-ubication" variant="blue">Modificar datos personales</button-comp>
-					<button-comp class="button-intructions" variant="blue">Modificar contraseña</button-comp>
+					<button-comp class="button-datos" variant="blue">Modificar datos personales</button-comp>
+					<button-comp class="button-pass" variant="blue">Modificar contraseña</button-comp>
+					<button-comp class="button-pets" variant="blue">Mis reportes</button-comp>
 				</div>
         <div class="footer">
 					<text-comp class="text-email" variant="text">miEmail@gmail.com</text-comp>
@@ -32,7 +33,7 @@ export function perfilPage() {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap:150px;
+        gap:100px;
       }
       .text{
         text-align: center;
@@ -51,6 +52,19 @@ export function perfilPage() {
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+			const buttonDatos = shadow.querySelector(".button-datos");
+			const buttonPass = shadow.querySelector(".button-pass");
+			const buttonPets = shadow.querySelector(".button-pets");
+
+			buttonDatos.addEventListener("click", () => {
+				Router.go("/datos");
+			});
+			buttonPass.addEventListener("click", () => {
+				Router.go("/pass");
+			});
+			buttonPets.addEventListener("click", () => {
+				Router.go("/mis-reports");
+			});
 		}
 	}
 	customElements.define("perfil-page", PerfilPage);

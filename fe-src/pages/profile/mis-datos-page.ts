@@ -1,3 +1,5 @@
+import { Router } from "@vaadin/router";
+import { state } from "../../state";
 export function dataPage() {
 	class DataPage extends HTMLElement {
 		constructor() {
@@ -19,6 +21,9 @@ export function dataPage() {
 					<input-comp class="input-localidad" type="text">LOCALIDAD</input-comp>
 					<button-comp class="button-form" variant="blue">Guardar</button-comp>
 				</form>
+				<div class="datos-act">
+          <text-comp variant="subtitle">Datos actualizados!</text-comp>
+        </div>
         
 			`;
 			style.innerHTML = `
@@ -45,12 +50,25 @@ export function dataPage() {
       .button-form{
         margin-top: 80px;
       }
+				.datos-act{
+          display: none;
+          width: 300px;
+          height:200px;
+          text-align: center;
+          align-items: center;
+          position: absolute;
+          background-color: white;
+          border-radius: 10px;
+          border:solid 2px black;
+          top: 30%;
+        }
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
 
 			const inputNombre = shadow.querySelector(".input-nombre");
 			const inputLocalidad = shadow.querySelector(".input-localidad");
+			const datosAct = shadow.querySelector(".datos-act");
 
 			const buttonForm = shadow.querySelector(".button-form");
 			buttonForm.addEventListener("click", (e) => {
@@ -58,9 +76,22 @@ export function dataPage() {
 				const nombre = inputNombre.shadowRoot.querySelector("input").value;
 				const localidad =
 					inputLocalidad.shadowRoot.querySelector("input").value;
-				console.log({ nombre, localidad });
+				guardar(nombre, localidad);
 			});
+			async function guardar(nombre: string, localidad: string) {
+				try {
+					const respuesta = await state.setDatesUser(nombre, localidad);
+					if (respuesta === "ok") {
+						datosAct.style.display = "inherit";
+						setTimeout(() => {
+							Router.go("/perfil");
+						}, 2000);
+					}
+				} catch (error) {
+					console.error("error al guardar", error);
+				}
+			}
 		}
-	}
+	} //guardar debe llevar a /perfil
 	customElements.define("mis-datos-page", DataPage);
 }

@@ -1,3 +1,4 @@
+import { Router } from "@vaadin/router";
 export function homePage() {
 	class HomePage extends HTMLElement {
 		constructor() {
@@ -20,7 +21,7 @@ export function homePage() {
 				</div>
 				<div class="home-buttons">
 					<button-comp class="button-ubication" variant="blue">Dar mi ubicación actual</button-comp>
-					<button-comp class="button-intructions" variant="green">¿Cómo funciona Pet Finder?</button-comp>
+					<button-comp class="button-login" variant="green">Inicia sesión</button-comp>
 				</div>
 			`;
 			style.innerHTML = `
@@ -57,6 +58,11 @@ export function homePage() {
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+
+			const buttonLogin = shadow.querySelector(".button-login");
+			buttonLogin.addEventListener("click", () => {
+				Router.go("/login");
+			});
 		}
 	}
 	customElements.define("home-page", HomePage);

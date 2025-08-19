@@ -1,17 +1,19 @@
+import { Router } from "@vaadin/router";
+import { state } from "../../state";
 export function registPage() {
-  class RegistPage extends HTMLElement {
-    constructor() {
-      super();
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      const style = document.createElement("style");
-      div.classList.add("container");
-      div.innerHTML = `
+	class RegistPage extends HTMLElement {
+		constructor() {
+			super();
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			const style = document.createElement("style");
+			div.classList.add("container");
+			div.innerHTML = `
 				<div class="text">
-					<text-comp class="text-title" variant="title">Iniciar Sesión</text-comp>		
+					<text-comp class="text-title" variant="title">Registrate</text-comp>		
 					<text-comp class="text-body" variant="text">Ingresá los siguientes datos para realizar el registro</text-comp>
 				</div>
 				<form class="form">
@@ -20,13 +22,20 @@ export function registPage() {
           <input-comp class="input-pass-confirm" type="password">CONFIRMAR CONTRASEÑA</input-comp>
           <div class="link">
             <text-comp class="text-footer" variant="text">ya tenés cuenta?</text-comp> 
-            <a class="text-link" href="/inicio"> Iniciar sesión</a>
+            <a class="text-link" href="/login"> Iniciar sesión</a>
           </div>
 					<button-comp class="button-form" variant="blue">Siguiente</button-comp>
 				</form>
+        <div class="error-email">
+          <text-comp variant="subtitle">El email ingresado ya se encuentra registrado!</text-comp>
+        </div>
+        <div class="error-pass">
+          <text-comp variant="subtitle"> Las contraseñas deben ser iguales!</text-comp>
+        </div>
+        
         
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
       .container{
         height: 100%;
         max-width: 100%;
@@ -67,23 +76,63 @@ export function registPage() {
         .button-form{
         margin-top: 20px;
         }
+        .error-email, .error-pass{
+          display: none;
+          width: 300px;
+          height:200px;
+          text-align: center;
+          align-items: center;
+          position: absolute;
+          background-color: white;
+          border-radius: 10px;
+          border:solid 2px black;
+          top: 30%;
+        }
       `;
-      shadow.appendChild(div);
-      shadow.appendChild(style);
+			shadow.appendChild(div);
+			shadow.appendChild(style);
 
-      const inputEmail = shadow.querySelector(".input-email");
-      const inputPass = shadow.querySelector(".input-pass");
-      const inputPassConfirm = shadow.querySelector(".input-pass-confirm");
+			const inputEmail = shadow.querySelector(".input-email");
+			const inputPass = shadow.querySelector(".input-pass");
+			const inputPassConfirm = shadow.querySelector(".input-pass-confirm");
+			const errorEmail = shadow.querySelector(".error-email");
+			const errorPass = shadow.querySelector(".error-pass");
 
-      const buttonForm = shadow.querySelector(".button-form");
-      buttonForm.addEventListener("click", (e) => {
-        e.preventDefault();
-        const email = inputEmail.shadowRoot.querySelector("input").value;
-        const password = inputPass.shadowRoot.querySelector("input").value;
-        const passwordConfirm = inputPassConfirm.shadowRoot.querySelector("input").value;
-        console.log({ email, password, passwordConfirm });
-      });
-    }
-  }
-  customElements.define("regist-page", RegistPage);
+			const buttonForm = shadow.querySelector(".button-form");
+			buttonForm.addEventListener("click", (e) => {
+				e.preventDefault();
+				const email = inputEmail.shadowRoot.querySelector("input").value;
+				const password = inputPass.shadowRoot.querySelector("input").value;
+				const passwordConfirm =
+					inputPassConfirm.shadowRoot.querySelector("input").value;
+				if (password === passwordConfirm) {
+					registUser(email, password);
+				} else {
+					errorPass.style.display = "inherit";
+					setTimeout(() => {
+						errorPass.style.display = "none";
+					}, 3000); //para que el cartel este 3 segundos y desaparezca
+				}
+			});
+			async function registUser(email: string, password: string) {
+				try {
+					const respuesta = await state.createUser(email, password);
+					if (respuesta === "email ya registrado") {
+						errorEmail.style.display = "inherit";
+						inputEmail.shadowRoot.querySelector("input").value = "";
+						inputPass.shadowRoot.querySelector("input").value = "";
+						inputPassConfirm.shadowRoot.querySelector("input").value = "";
+						setTimeout(() => {
+							errorEmail.style.display = "none";
+						}, 3000); //para que el cartel este 3 segundos y desaparezca
+					} else if (respuesta === "ok") {
+						Router.go("/datos");
+					}
+				} catch (error) {
+					console.error("error en login", error);
+				}
+			}
+		}
+	}
+	customElements.define("regist-page", RegistPage);
 }
