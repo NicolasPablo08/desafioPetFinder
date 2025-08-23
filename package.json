@@ -4,7 +4,8 @@
   "scripts": {
     "dev:be": "nodemon --watch ./be-src/server.ts --exec ts-node ./be-src/server.ts",
     "dev:fe": "parcel serve ./fe-src/index.html",
-    "dev": "nodemon --exec ts-node dev.ts"
+    "dev": "nodemon --exec ts-node dev.ts",
+    "sync": "ts-node ./be-src/models/sync.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,7 @@
     "dropzone": "^6.0.0-beta.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "parcel": "^2.15.4",
     "pg": "^8.16.3",
@@ -27,8 +29,15 @@
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "events": "^3.3.0",
     "nodemon": "^3.1.10",
+    "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "string_decoder": "^1.3.0",
+    "vm-browserify": "^1.1.2"
   }
 }

@@ -1,29 +1,28 @@
 export function cardComp() {
-	class CardComp extends HTMLElement {
-		constructor() {
-			super();
-			this.render();
-		}
-		render() {
-			const shadow = this.attachShadow({ mode: "open" });
-			const div = document.createElement("div");
-			const style = document.createElement("style");
-			const variant = this.getAttribute("variant");
-			div.classList.add("card");
-			const petImgUrl = this.getAttribute("petImgUrl"); //remplazar
-			const petName = this.getAttribute("petName") || "Bobby"; //remplazar
-			const petLocation =
-				this.getAttribute("petLocation") || "Buenos Aires, Argentina"; //remplazar
-			let btnType;
-			let btnText;
-			if (variant === "edit") {
-				btnType = "blue";
-				btnText = "Editar 🖉";
-			} else if (variant === "report") {
-				btnType = "red";
-				btnText = "Reportar 🚨";
-			}
-			div.innerHTML = `
+  class CardComp extends HTMLElement {
+    constructor() {
+      super();
+      this.render();
+    }
+    render() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const div = document.createElement("div");
+      const style = document.createElement("style");
+      const variant = this.getAttribute("variant");
+      div.classList.add("card");
+      const petImgUrl = this.getAttribute("petImgUrl");
+      const petName = this.getAttribute("petName");
+      const petLocation = this.getAttribute("petLocation");
+      let btnType;
+      let btnText;
+      if (variant === "edit") {
+        btnType = "blue";
+        btnText = "Editar 🖉";
+      } else if (variant === "report") {
+        btnType = "red";
+        btnText = "Reportar 🚨";
+      }
+      div.innerHTML = `
       <div class="img-container">
         <img class="card-img" src=${petImgUrl} alt="Card Image">
       </div>
@@ -35,7 +34,7 @@ export function cardComp() {
         <button-comp class="card-btn" variant=${btnType}>${btnText}</button-comp> 
       </div>
       `;
-			style.innerHTML = `
+      style.innerHTML = `
       .card{
       width:335px;
       height:234px;
@@ -77,11 +76,11 @@ export function cardComp() {
       }
       
       `;
-			shadow.appendChild(div);
-			shadow.appendChild(style);
-			const buttonCard = shadow.querySelector(".card-btn");
-			buttonCard.dispatchEvent(new Event("click"));
-		}
-	}
-	customElements.define("card-comp", CardComp);
+      shadow.appendChild(div);
+      shadow.appendChild(style);
+      const buttonCard = shadow.querySelector(".card-btn");
+      buttonCard.dispatchEvent(new Event("click"));
+    }
+  }
+  customElements.define("card-comp", CardComp);
 }
