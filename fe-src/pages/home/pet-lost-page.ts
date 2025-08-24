@@ -1,33 +1,42 @@
+import { Router } from "@vaadin/router";
+import { state } from "../../state";
 export function petLostPage() {
-	class PetLostPage extends HTMLElement {
-		constructor() {
-			super();
-			this.render();
-		}
-		render() {
-			const shadow = this.attachShadow({ mode: "open" });
-			const div = document.createElement("div");
-			const style = document.createElement("style");
-			div.classList.add("home__container");
-			//esta info debe venir del state, por ahora sirve para maquetar
-			const petsInfo = [
-				{ name: "beto", location: "cipolletti,rn" },
-				{ name: "coki", location: "neuquen, nqn" },
-				{ name: "uri", location: "plottier, nqn" },
-				{ name: "micho", location: "allen, rn" },
-			];
-			div.innerHTML = `
+  class PetLostPage extends HTMLElement {
+    constructor() {
+      super();
+      this.render();
+    }
+    render() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const div = document.createElement("div");
+      const style = document.createElement("style");
+      div.classList.add("home__container");
+      const imagenEmptyReport = require("url:../../icons/icon-misReports.png");
+
+      //esta info debe venir del state, por ahora sirve para maquetar
+      const petsInfo = [
+        { name: "beto", location: "cipolletti,rn", email: "beto@beto" },
+        { name: "coki", location: "neuquen, nqn", email: "coki@coki" },
+        { name: "uri", location: "plottier, nqn", email: "uri@uri" },
+        { name: "micho", location: "allen, rn", email: "micho@micho" },
+      ];
+      div.innerHTML = `
       <div class="home-blur">
 				<div class="home-title">
           <text-comp class="text-title" variant="subtitleBold">Mascotas perdidas cerca</text-comp>				
         </div>
 				<div class="container-cards">
 					${petsInfo
-						.map((pet) => {
-							return `<card-comp class="card"petName="${pet.name}" petLocation="${pet.location}" petImgUrl ="" variant="report"></card-comp>`;
-						})
-						.join("")}
+            .map((pet) => {
+              return `<card-comp class="card"petName="${pet.name}" data-email="${pet.email}" petLocation="${pet.location}" petImgUrl ="" variant="report"></card-comp>`;
+            })
+            .join("")}
 				</div>
+				<div class="empty-report">
+						<text-comp class="text-body" variant="text">No se encontraron mascotas, intenta ampliando el rango o con otra ubicación</text-comp>
+						<img class="img" src="${imagenEmptyReport}">
+				</div>
+				<button-comp class="button-new-search" variant="blue">Nueva busqueda</button-comp>    
       </div> 
         <div class="form-report">
           <button class="close-button">X</button>
@@ -39,8 +48,9 @@ export function petLostPage() {
             <button-comp variant="green" class="form-button">Enviar información</button-comp>
           </form>
         </div>  
+
 			`;
-			style.innerHTML = `
+      style.innerHTML = `
       .home__container{
         height: 100%;
         max-width: 100%;
@@ -92,50 +102,75 @@ export function petLostPage() {
      display:flex;
      flex-direction: column;
      gap:25px;
-     
      }
+		.empty-report{
+    	flex-direction: column;
+    	gap:15px;
+    	text-align: center;
+    } 
+    .img{
+      width:305px;
+      height:250px;
+      margin-top:20px;
+      margin-bottom:25px;
+    }
+		.button-new-search{
+      margin-top:50px;
+    }
       `;
-			shadow.appendChild(div);
-			shadow.appendChild(style);
-			const header = document.querySelector("header-comp");
-			const form = shadow.querySelector(".form-report");
-			const blurHome = shadow.querySelector(".home-blur");
-			//si no lo hago asi, me toma el clik solo del primer card
-			const reportButtons = shadow.querySelectorAll(".card");
-			reportButtons.forEach((reportButton) => {
-				reportButton.addEventListener("click", () => {
-					form.style.display = "flex";
-					blurHome.style.filter = "blur(5px)"; //difuminamos lo que queda atras
-					blurHome.style.pointerEvents = "none"; //para que no se pueda clickear lo que queda atras
-					header.style.filter = "blur(5px)"; //difuminamos el header
-					header.style.pointerEvents = "none"; //para no poder clickear el header
-				});
-			});
-			const closeButton = shadow.querySelector(".close-button");
-			closeButton.addEventListener("click", () => {
-				form.style.display = "none";
-				blurHome.style.filter = "none";
-				blurHome.style.pointerEvents = "auto";
-				header.style.filter = "none";
-				header.style.pointerEvents = "auto";
-			});
-			const formNombre = shadow.querySelector(".form-nombre ");
-			const formTelefono = form.querySelector(".form-telefono");
-			const formUbicacion = form.querySelector(".form-ubicacion");
-			const formButton = shadow.querySelector(".form-button");
-			formButton.addEventListener("click", (e) => {
-				e.preventDefault();
-				const nombre = formNombre.shadowRoot.querySelector("input").value;
-				const telefono = formTelefono.shadowRoot.querySelector("input").value;
-				const ubicacion = formUbicacion.shadowRoot.querySelector("input").value;
-				console.log({ nombre, telefono, ubicacion });
-				form.style.display = "none";
-				blurHome.style.filter = "none";
-				blurHome.style.pointerEvents = "auto";
-				header.style.filter = "none";
-				header.style.pointerEvents = "auto";
-			});
-		}
-	}
-	customElements.define("pet-lost-page", PetLostPage);
+      shadow.appendChild(div);
+      shadow.appendChild(style);
+
+      const emptyReport = shadow.querySelector(".empty-report");
+      if (petsInfo.length > 0) {
+        emptyReport.style.display = "none";
+      } else {
+        emptyReport.style.display = "flex";
+      }
+      const buttonNewSearch = shadow.querySelector(".button-new-search");
+      buttonNewSearch.addEventListener("click", () => {
+        Router.go("/share-loc");
+      });
+
+      const header = document.querySelector("header-comp");
+      const form = shadow.querySelector(".form-report");
+      const blurHome = shadow.querySelector(".home-blur");
+      //si no lo hago asi, me toma el clik solo del primer card
+      const reportButtons = shadow.querySelectorAll(".card");
+      reportButtons.forEach((reportButton) => {
+        reportButton.addEventListener("click", () => {
+          form.style.display = "flex";
+          blurHome.style.filter = "blur(5px)"; //difuminamos lo que queda atras
+          blurHome.style.pointerEvents = "none"; //para que no se pueda clickear lo que queda atras
+          header.style.filter = "blur(5px)"; //difuminamos el header
+          header.style.pointerEvents = "none"; //para no poder clickear el header
+        });
+      });
+      const closeButton = shadow.querySelector(".close-button");
+      closeButton.addEventListener("click", () => {
+        form.style.display = "none";
+        blurHome.style.filter = "none";
+        blurHome.style.pointerEvents = "auto";
+        header.style.filter = "none";
+        header.style.pointerEvents = "auto";
+      });
+      const formNombre = shadow.querySelector(".form-nombre ");
+      const formTelefono = form.querySelector(".form-telefono");
+      const formUbicacion = form.querySelector(".form-ubicacion");
+      const formButton = shadow.querySelector(".form-button");
+      formButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const nombre = formNombre.shadowRoot.querySelector("input").value;
+        const telefono = formTelefono.shadowRoot.querySelector("input").value;
+        const ubicacion = formUbicacion.shadowRoot.querySelector("input").value;
+        console.log({ nombre, telefono, ubicacion });
+        form.style.display = "none";
+        blurHome.style.filter = "none";
+        blurHome.style.pointerEvents = "auto";
+        header.style.filter = "none";
+        header.style.pointerEvents = "auto";
+      });
+    }
+  }
+  customElements.define("pet-lost-page", PetLostPage);
 }

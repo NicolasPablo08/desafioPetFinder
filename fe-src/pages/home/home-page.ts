@@ -1,17 +1,17 @@
 import { Router } from "@vaadin/router";
 export function homePage() {
-	class HomePage extends HTMLElement {
-		constructor() {
-			super();
-			this.render();
-		}
-		render() {
-			const shadow = this.attachShadow({ mode: "open" });
-			const div = document.createElement("div");
-			const style = document.createElement("style");
-			const imageSrc = require("url:../../icons/icon-home.png");
-			div.classList.add("home__container");
-			div.innerHTML = `
+  class HomePage extends HTMLElement {
+    constructor() {
+      super();
+      this.render();
+    }
+    render() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const div = document.createElement("div");
+      const style = document.createElement("style");
+      const imageSrc = require("url:../../icons/icon-home.png");
+      div.classList.add("home__container");
+      div.innerHTML = `
 				<div class="home-img">
 					<img class="img" src="${imageSrc}">
 				</div>
@@ -20,11 +20,11 @@ export function homePage() {
 					<text-comp class="text-body" variant="subtitle">Encontrá y reportá mascotas perdidas cerca de tu ubicación</text-comp>
 				</div>
 				<div class="home-buttons">
-					<button-comp class="button-ubication" variant="blue">Dar mi ubicación actual</button-comp>
-					<button-comp class="button-login" variant="green">Inicia sesión</button-comp>
+					<button-comp class="button-ubication" variant="blue">Ver mascotas perdidas cerca</button-comp>
+					<button-comp class="button-login" variant="green">Inicia sesión, para reportar</button-comp>
 				</div>
 			`;
-			style.innerHTML = `
+      style.innerHTML = `
       .home__container{
         height: 100%;
         max-width: 100%;
@@ -56,14 +56,17 @@ export function homePage() {
       gap:20px;
       } 
       `;
-			shadow.appendChild(div);
-			shadow.appendChild(style);
-
-			const buttonLogin = shadow.querySelector(".button-login");
-			buttonLogin.addEventListener("click", () => {
-				Router.go("/login");
-			});
-		}
-	}
-	customElements.define("home-page", HomePage);
+      shadow.appendChild(div);
+      shadow.appendChild(style);
+      const buttonUbication = shadow.querySelector(".button-ubication");
+      buttonUbication.addEventListener("click", () => {
+        Router.go("/share-loc");
+      });
+      const buttonLogin = shadow.querySelector(".button-login");
+      buttonLogin.addEventListener("click", () => {
+        Router.go("/login");
+      });
+    }
+  }
+  customElements.define("home-page", HomePage);
 }

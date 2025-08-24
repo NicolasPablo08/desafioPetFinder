@@ -10,6 +10,7 @@ export function inputComp() {
       const nameAttribute = this.getAttribute("name");
       const variant = this.getAttribute("variant");
       const type = this.getAttribute("type");
+      const placeholder = this.getAttribute("placeholder");
       const label = document.createElement("label");
       label.style.fontSize = "16px";
       label.style.fontWeight = "400";
@@ -18,6 +19,7 @@ export function inputComp() {
       const input = document.createElement("input");
       input.setAttribute("name", nameAttribute);
       input.type = type || "text";
+      input.placeholder = placeholder || "";
       const style = document.createElement("style");
       if (variant === "black") {
         input.style.backgroundColor = "#4A5553";
