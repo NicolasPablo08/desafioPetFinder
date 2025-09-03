@@ -71,6 +71,9 @@ export function passPage() {
 			shadow.appendChild(div);
 			shadow.appendChild(style);
 
+			//chequeamos que estemos logueados
+			const isLogin = state.checkLogin();
+
 			const passwordEl = shadow.querySelector(".input-pass");
 			const confirmPasswordEl = shadow.querySelector(".input-confirm");
 			const passAct = shadow.querySelector(".pass-act");
@@ -84,7 +87,11 @@ export function passPage() {
 				const confirmPassword =
 					confirmPasswordEl.shadowRoot.querySelector("input").value;
 				if (password === confirmPassword) {
-					changePass(password);
+					if (isLogin) {
+						changePass(password);
+					} else {
+						Router.go("/login");
+					}
 				} else {
 					errorPass.style.display = "inherit";
 					passwordEl.shadowRoot.querySelector("input").value = "";

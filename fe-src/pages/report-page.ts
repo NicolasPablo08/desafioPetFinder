@@ -85,6 +85,8 @@ export function reportPage() {
 
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+			//chequeo si estoy logueado
+			const isLogin = state.checkLogin();
 
 			const buttonImg = shadow.querySelector(".button-img");
 			const buttonReport = shadow.querySelector(".button-report");
@@ -119,7 +121,11 @@ export function reportPage() {
 			//boton cancelar
 			buttonCancel.addEventListener("click", (e) => {
 				e.preventDefault();
-				Router.go("/mis-reports");
+				if (isLogin) {
+					Router.go("/mis-reports");
+				} else {
+					Router.go("/login");
+				}
 			});
 
 			//crear reporte con todos los datos
@@ -140,7 +146,11 @@ export function reportPage() {
 					return console.log(
 						"Faltan campos por completar, todos los campos son obligatorios"
 					);
-				newReport(name, imgUrl, lat, lng);
+				if (isLogin) {
+					newReport(name, imgUrl, lat, lng);
+				} else {
+					Router.go("/login");
+				}
 			});
 			async function newReport(
 				name: string,

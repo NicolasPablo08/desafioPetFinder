@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 export function perfilPage() {
 	class PerfilPage extends HTMLElement {
 		constructor() {
@@ -52,18 +53,34 @@ export function perfilPage() {
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+
+			//chequeo si estoy logueado
+			const isLogin = state.checkLogin();
+
 			const buttonDatos = shadow.querySelector(".button-datos");
 			const buttonPass = shadow.querySelector(".button-pass");
 			const buttonPets = shadow.querySelector(".button-pets");
 
 			buttonDatos.addEventListener("click", () => {
-				Router.go("/datos");
+				if (isLogin) {
+					Router.go("/datos");
+				} else {
+					Router.go("/login");
+				}
 			});
 			buttonPass.addEventListener("click", () => {
-				Router.go("/pass");
+				if (isLogin) {
+					Router.go("/pass");
+				} else {
+					Router.go("/login");
+				}
 			});
 			buttonPets.addEventListener("click", () => {
-				Router.go("/mis-reports");
+				if (isLogin) {
+					Router.go("/mis-reports");
+				} else {
+					Router.go("/login");
+				}
 			});
 		}
 	}

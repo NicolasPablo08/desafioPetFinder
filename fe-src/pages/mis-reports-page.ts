@@ -82,6 +82,10 @@ export function misReportsPage() {
       `;
 			shadow.appendChild(div);
 			shadow.appendChild(style);
+
+			//verificamos si el usuario esta logueado
+			const isLogin = state.checkLogin();
+
 			const emptyReport = shadow.querySelector(".empty-report");
 			if (allMyPets.length > 0) {
 				emptyReport.style.display = "none";
@@ -98,7 +102,11 @@ export function misReportsPage() {
 			});
 			const reportButton = shadow.querySelector(".button");
 			reportButton.addEventListener("click", () => {
-				Router.go("/report");
+				if (isLogin) {
+					Router.go("/report");
+				} else {
+					Router.go("/login");
+				}
 			});
 		}
 	}

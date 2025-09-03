@@ -66,6 +66,9 @@ export function dataPage() {
 			shadow.appendChild(div);
 			shadow.appendChild(style);
 
+			//chequeamos que estamos logueados
+			const isLogin = state.checkLogin();
+
 			const inputNombre = shadow.querySelector(".input-nombre");
 			const inputLocalidad = shadow.querySelector(".input-localidad");
 			const datosAct = shadow.querySelector(".datos-act");
@@ -76,7 +79,11 @@ export function dataPage() {
 				const nombre = inputNombre.shadowRoot.querySelector("input").value;
 				const localidad =
 					inputLocalidad.shadowRoot.querySelector("input").value;
-				guardar(nombre, localidad);
+				if (isLogin) {
+					guardar(nombre, localidad);
+				} else {
+					Router.go("/login");
+				}
 			});
 			async function guardar(nombre: string, localidad: string) {
 				try {

@@ -2,6 +2,9 @@ import { User, Pet } from "../models/index";
 import * as bcrypt from "bcrypt"; //nuevo algoritmo para hashear password, mas seguro que "crypto"
 import * as jwt from "jsonwebtoken";
 import cloudinary from "../lib/cloudinary";
+import { client } from "../lib/algolia";
+import { transporter } from "../lib/nodemailer";
+import "dotenv/config";
 
 //cracion del hash para el password
 async function getHash(pass: string) {
@@ -113,6 +116,19 @@ export async function createReport(
 			lost: true,
 			UserId: userId,
 		});
+		if (newPetReport) {
+			const algoliaRes = await client.saveObject({
+				indexName: "pets",
+				body: {
+					objectID: newPetReport.get("id"),
+					name: newPetReport.get("name"),
+					_geoloc: {
+						lat: newPetReport.get("lat"),
+						lng: newPetReport.get("lng"),
+					},
+				},
+			});
+		}
 		return newPetReport;
 	} catch (error) {
 		return { message: "Error al crear el reporte de la mascota", error };
@@ -160,6 +176,11 @@ export async function editReport(
 		}
 		const editReport = await Pet.update(updateData, {
 			where: { UserId: userId, id: petId },
+		});
+		const algoliaRes = await client.partialUpdateObject({
+			indexName: "pets",
+			objectID: petId.toString(),
+			attributesToUpdate: { name, _geoloc: { lat, lng } },
 		});
 		const reportPet = await Pet.findOne({ where: { id: petId } });
 		return reportPet;
@@ -210,11 +231,37 @@ export async function deleteReport(userId: number, petId: number) {
 			await cloudinary.uploader.destroy(
 				reportToDelete.dataValues.imagePublicId
 			);
+			const algoliaRes = await client.deleteObject({
+				indexName: "pets",
+				objectID: petId.toString(),
+			});
 			return { delete: true };
 		} else {
 			return { message: "Reporte no encontrado para eliminar" };
 		}
 	} catch (error) {
 		return { message: "Error al eliminar el reporte", error };
+	}
+}
+export async function SendEmail(
+	nombre: string,
+	email: string,
+	telefono: string,
+	informacion: string,
+	namePet: string
+) {
+	try {
+		//utilizamos transporter de la libreria nomadelier que nos permite enviar emails
+		const data = await transporter.sendMail({
+			from: `"mascotas perdidas" <${process.env.EMAIL_USER}>`,
+			to: email,
+			subject: `He visto a ${namePet}`,
+			text: `Hola, soy ${nombre}. ${informacion}. Puedes contactarme al ${telefono}.`,
+		});
+		if (data.rejected.length > 0) throw new Error("Error al enviar el email");
+		return "ok";
+	} catch (error) {
+		console.error("Error al enviar el email:", error);
+		return "error";
 	}
 }

@@ -12,8 +12,10 @@ import {
 	editReport,
 	getOnePetLostUser,
 	deleteReport,
+	SendEmail,
 } from "./controllers/user-controller";
 import "dotenv/config";
+import { searchPets } from "./controllers/pet-controller";
 
 console.log(process.env.SEQUELIZE_URL);
 
@@ -71,7 +73,7 @@ function authMiddleware(req, res, next) {
 
 //para setear nombre y localidad
 app.patch("/me/mis-datos", authMiddleware, async (req, res) => {
-	if (!req.body.name || !req.body.localidad)
+	if (!req.body.name || !req.body.location)
 		return res.status(400).send({
 			message: "falta el nombre o la localidad para cargar en el perfil",
 		});
@@ -80,7 +82,7 @@ app.patch("/me/mis-datos", authMiddleware, async (req, res) => {
 	try {
 		const user = await setNameAndLocalidad(
 			req.body.name,
-			req.body.localidad,
+			req.body.location,
 			req._user.id
 		);
 		return res.json(user);
@@ -208,6 +210,46 @@ app.delete("/me/my-pets/:petId", authMiddleware, async (req, res) => {
 	}
 });
 
+//buscamos pets cercanos a una ubicacion
+app.get("/search-pets", async (req, res) => {
+	const { lat, lng, rango } = req.query;
+	if (!lat || !lng || !rango)
+		return res.status(400).json({ message: "Falta la latitud y la longitud" });
+	try {
+		const allPets = await searchPets(lat, lng, rango);
+		return res.json(allPets);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error al obtener las mascotas perdidas cerca de un lugar",
+			error,
+		});
+	}
+});
+
+//enviar email
+app.post("/send-email", async (req, res) => {
+	const { nombre, email, telefono, informacion, namePet } = req.body;
+	if (!email || !nombre || !telefono || !informacion || !namePet)
+		return res.status(400).json({
+			message:
+				"Falta el email, nombre, telefono, informacion o el nombre de la mascota",
+		});
+	try {
+		const response = await SendEmail(
+			nombre,
+			email,
+			telefono,
+			informacion,
+			namePet
+		);
+		return res.json(response);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error al enviar el email",
+			error,
+		});
+	}
+});
 //////////////////////////////////////////
 const ruta = path.join(__dirname, "../fe-dist");
 app.use(express.static(ruta));

@@ -1,5 +1,6 @@
 import find from "lodash/find";
 import "dotenv/config";
+import { log } from "console";
 
 const LOCAL_URL = process.env.LOCAL_URL;
 type Pet = {
@@ -8,6 +9,7 @@ type Pet = {
 	imgUrl: string;
 	lat: number;
 	lng: number;
+	userEmail?: string;
 };
 
 export const state = {
@@ -301,5 +303,93 @@ export const state = {
 			throw new Error("Mascota no encontrada en el state");
 		}
 		return pet;
+	},
+
+	//buscamos todos los pets cercanos a una ubicacion
+	async searchPetsNearby(lat: number, lng: number, rango: number) {
+		const cb = this.getState();
+		try {
+			const respuesta = await fetch(
+				LOCAL_URL +
+					"/search-pets?lat=" +
+					lat +
+					"&lng=" +
+					lng +
+					"&rango=" +
+					rango
+			);
+			const data = await respuesta.json();
+			// console.log(data);
+
+			const searchPets = data.map((pet) => ({
+				petId: pet.id,
+				name: pet.name,
+				imgUrl: pet.imageUrl,
+				lat: pet.lat,
+				lng: pet.lng,
+				userEmail: pet["User.email"] || null, //si usamos raw:true en el controller (limpia el objeto resultado), obtenemos el mail asi, si no utilizamos raw: true, accedemos con pet.User.email
+			}));
+			cb.allPetsLost = searchPets;
+			this.setState(cb);
+			return "ok";
+		} catch (error) {
+			console.error(
+				"Error en al realizar las busqueda con el metodo searchPetsNearby:",
+				error
+			);
+		}
+	},
+	//enviar email
+	async sendEmail(
+		nombre: string,
+		email: string,
+		telefono: string,
+		informacion: string,
+		namePet: string
+	) {
+		try {
+			const respuesta = await fetch(LOCAL_URL + "/send-email", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					nombre,
+					email,
+					telefono,
+					informacion,
+					namePet,
+				}),
+			});
+			const data = await respuesta.json();
+			return data;
+		} catch (error) {
+			console.error("Error al enviar el email", error);
+		}
+	},
+	//chequear si estamos logueados o no
+	checkLogin() {
+		const token = this.getState().user.token;
+		if (token) {
+			return true;
+		} else {
+			this.logOut();
+			return false;
+		}
+	},
+
+	//Deslogueo
+	logOut() {
+		const initialState = {
+			user: {
+				name: "",
+				email: "",
+				location: "",
+				token: "",
+			},
+			petsUser: [],
+			allPetsLost: [],
+		};
+		this.setState(initialState);
 	},
 };
