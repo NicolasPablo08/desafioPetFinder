@@ -1,18 +1,18 @@
 import { Router } from "@vaadin/router";
 import { state } from "../../state";
 export function homePage() {
-  class HomePage extends HTMLElement {
-    constructor() {
-      super();
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      const style = document.createElement("style");
-      const imageSrc = require("url:../../icons/icon-home.png");
-      div.classList.add("home__container");
-      div.innerHTML = `
+	class HomePage extends HTMLElement {
+		constructor() {
+			super();
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			const style = document.createElement("style");
+			const imageSrc = require("url:../../icons/icon-home.png");
+			div.classList.add("home__container");
+			div.innerHTML = `
 			<div class="home">
 				<div class="home-img">
 					<img class="img" src="${imageSrc}">
@@ -27,7 +27,7 @@ export function homePage() {
 				</div>
 			</div>	
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
       .home__container{
 				box-sizing: border-box;
 				min-height:calc(100vh - 60px);
@@ -48,8 +48,8 @@ export function homePage() {
       .img{
         margin:0;
         padding:0;
-        width:215px;
-        height:235px;
+        width:300px;
+        height:250px;
       }
       .home-text{
         text-align: center;
@@ -64,28 +64,28 @@ export function homePage() {
       display: flex;
 			width: 100%;
       flex-direction: column;
-      gap:22px;
+      gap:20px;
       } 
       `;
-      shadow.appendChild(div);
-      shadow.appendChild(style);
+			shadow.appendChild(div);
+			shadow.appendChild(style);
 
-      //chequea si estamos logueados o no
-      const isLogin = state.checkLogin();
+			//chequea si estamos logueados o no
+			const isLogin = state.checkLogin();
 
-      const buttonUbication = shadow.querySelector(".button-ubication");
-      buttonUbication.addEventListener("click", () => {
-        Router.go("/share-loc");
-      });
-      const buttonLogin = shadow.querySelector(".button-login");
-      buttonLogin.addEventListener("click", () => {
-        if (isLogin) {
-          Router.go("/perfil");
-        } else {
-          Router.go("/login");
-        }
-      });
-    }
-  }
-  customElements.define("home-page", HomePage);
+			const buttonUbication = shadow.querySelector(".button-ubication");
+			buttonUbication.addEventListener("click", () => {
+				Router.go("/share-loc");
+			});
+			const buttonLogin = shadow.querySelector(".button-login");
+			buttonLogin.addEventListener("click", () => {
+				if (isLogin) {
+					Router.go("/perfil");
+				} else {
+					Router.go("/login");
+				}
+			});
+		}
+	}
+	customElements.define("home-page", HomePage);
 }
