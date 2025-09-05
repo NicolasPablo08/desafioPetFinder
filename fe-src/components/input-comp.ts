@@ -16,9 +16,17 @@ export function inputComp() {
 			label.style.fontWeight = "400";
 			label.textContent = this.textContent;
 			label.setAttribute("variant", "text");
-			const input = document.createElement("input");
+			const intro = this.getAttribute("intro");
+			let input;
+			if (intro === "textarea") {
+				input = document.createElement("textarea");
+				input.style.display = "block";
+			} else {
+				input = document.createElement("input");
+				input.type = type || "text";
+			}
 			input.setAttribute("name", nameAttribute);
-			input.type = type || "text";
+
 			input.placeholder = placeholder || "";
 			const style = document.createElement("style");
 			if (variant === "black") {
@@ -30,10 +38,10 @@ export function inputComp() {
 			const height = this.getAttribute("height");
 			if (height) input.style.height = height;
 			style.textContent = `
-      input {
+      input, textarea {
 			box-sizing: border-box;
       margin:0;
-      padding:0;
+      padding:5px;
       min-width: 100%;
       height:50px;
       border-radius: 4px;

@@ -11,16 +11,16 @@ export function textComp() {
 				variant === "title"
 					? "h1"
 					: variant === "subtitle"
-					? "h3"
-					: variant === "subtitleBold"
-					? "h3"
-					: variant === "text"
-					? "p"
-					: variant === "textBold"
-					? "p"
-					: variant === "link"
-					? "a"
-					: "p";
+						? "h3"
+						: variant === "subtitleBold"
+							? "h3"
+							: variant === "text"
+								? "p"
+								: variant === "textBold"
+									? "p"
+									: variant === "link"
+										? "a"
+										: "p";
 			const textEl = document.createElement(choice);
 			textEl.classList.add(variant);
 			textEl.classList.add("principal");

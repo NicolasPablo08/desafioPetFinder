@@ -82,7 +82,7 @@ export function dataPage() {
 				if (isLogin) {
 					guardar(nombre, localidad);
 				} else {
-					Router.go("/login");
+					state.logOut();
 				}
 			});
 			async function guardar(nombre: string, localidad: string) {

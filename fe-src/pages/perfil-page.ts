@@ -1,17 +1,18 @@
 import { Router } from "@vaadin/router";
 import { state } from "../state";
 export function perfilPage() {
-  class PerfilPage extends HTMLElement {
-    constructor() {
-      super();
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      const style = document.createElement("style");
-      div.classList.add("container");
-      div.innerHTML = `
+	class PerfilPage extends HTMLElement {
+		constructor() {
+			super();
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			const style = document.createElement("style");
+			div.classList.add("container");
+			const email = state.getState().user.email;
+			div.innerHTML = `
 			<div class="datos">
 				<div class="text">
 					<text-comp class="text-title" variant="title">Mis datos</text-comp>		
@@ -22,12 +23,12 @@ export function perfilPage() {
 					<button-comp class="button-pets" variant="blue">Mis reportes</button-comp>
 				</div>
         <div class="footer">
-					<text-comp class="text-email" variant="text">miEmail@gmail.com</text-comp>
+					<text-comp class="text-email" variant="text">${email || "miEmail@gmail.com"}</text-comp>
           <text-comp class="text-link" variant="link">Cerrar sesión</text-comp>		
 				</div>
 			</div>	
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
       .container{
 				box-sizing: border-box;
         height: calc(100vh - 60px);
@@ -59,38 +60,42 @@ export function perfilPage() {
       text-align: center;
       } 
       `;
-      shadow.appendChild(div);
-      shadow.appendChild(style);
+			shadow.appendChild(div);
+			shadow.appendChild(style);
 
-      //chequeo si estoy logueado
-      const isLogin = state.checkLogin();
+			//chequeo si estoy logueado
+			const isLogin = state.checkLogin();
 
-      const buttonDatos = shadow.querySelector(".button-datos");
-      const buttonPass = shadow.querySelector(".button-pass");
-      const buttonPets = shadow.querySelector(".button-pets");
+			const buttonDatos = shadow.querySelector(".button-datos");
+			const buttonPass = shadow.querySelector(".button-pass");
+			const buttonPets = shadow.querySelector(".button-pets");
+			const linkLogOut = shadow.querySelector(".text-link");
+			linkLogOut.addEventListener("click", () => {
+				state.logOut();
+			});
 
-      buttonDatos.addEventListener("click", () => {
-        if (isLogin) {
-          Router.go("/datos");
-        } else {
-          Router.go("/login");
-        }
-      });
-      buttonPass.addEventListener("click", () => {
-        if (isLogin) {
-          Router.go("/pass");
-        } else {
-          Router.go("/login");
-        }
-      });
-      buttonPets.addEventListener("click", () => {
-        if (isLogin) {
-          Router.go("/mis-reports");
-        } else {
-          Router.go("/login");
-        }
-      });
-    }
-  }
-  customElements.define("perfil-page", PerfilPage);
+			buttonDatos.addEventListener("click", () => {
+				if (isLogin) {
+					Router.go("/datos");
+				} else {
+					state.logOut();
+				}
+			});
+			buttonPass.addEventListener("click", () => {
+				if (isLogin) {
+					Router.go("/pass");
+				} else {
+					state.logOut();
+				}
+			});
+			buttonPets.addEventListener("click", () => {
+				if (isLogin) {
+					Router.go("/mis-reports");
+				} else {
+					state.logOut();
+				}
+			});
+		}
+	}
+	customElements.define("perfil-page", PerfilPage);
 }

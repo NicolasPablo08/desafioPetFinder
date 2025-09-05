@@ -46,7 +46,7 @@ export function petLostPage() {
           <form class="form">
             <input-comp variant="black" class="form-nombre" name="nombre" >NOMBRE</input-comp>
             <input-comp variant="black" class="form-telefono" name="telefono">TELEFONO</input-comp>
-            <input-comp variant="black" class="form-info" name="info" height="131px">¿DÓNDE LO VISTE?</input-comp>
+            <input-comp variant="black" class="form-info" name="info" intro= "textarea" height="131px">¿DÓNDE LO VISTE?</input-comp>
             <button-comp variant="green" class="form-button">Enviar información</button-comp>
           </form>
         </div>  
