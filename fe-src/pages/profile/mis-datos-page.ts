@@ -1,17 +1,18 @@
 import { Router } from "@vaadin/router";
 import { state } from "../../state";
 export function dataPage() {
-	class DataPage extends HTMLElement {
-		constructor() {
-			super();
-			this.render();
-		}
-		render() {
-			const shadow = this.attachShadow({ mode: "open" });
-			const div = document.createElement("div");
-			const style = document.createElement("style");
-			div.classList.add("container");
-			div.innerHTML = `
+  class DataPage extends HTMLElement {
+    constructor() {
+      super();
+      this.render();
+    }
+    render() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const div = document.createElement("div");
+      const style = document.createElement("style");
+      div.classList.add("container");
+      div.innerHTML = `
+			<div class="datos">
 				<div class="text">
 					<text-comp class="text-title" variant="title">Datos</text-comp>
           <text-comp class="text-title" variant="title">personales</text-comp>
@@ -19,25 +20,30 @@ export function dataPage() {
 				<form class="form">
         	<input-comp class="input-nombre" type="text">NOMBRE</input-comp>
 					<input-comp class="input-localidad" type="text">LOCALIDAD</input-comp>
-					<button-comp class="button-form" variant="blue">Guardar</button-comp>
 				</form>
+				<button-comp class="button-form" variant="blue">Guardar</button-comp>
 				<div class="datos-act">
           <text-comp variant="subtitle">Datos actualizados!</text-comp>
         </div>
-        
+      </div>  
 			`;
-			style.innerHTML = `
+      style.innerHTML = `
       .container{
-        height: 100%;
-        max-width: 100%;
+				box-sizing: border-box;
+        height: calc(100vh - 60px);
+        width: 100%;
         margin:0;
-        padding:50px 20px 0 20px;
+        padding:50px 20px 70px 20px;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap:100px;
+        justify-content: center;
       }
-  
+			.datos{
+			max-width: 550px;
+				height: 100%;
+				display:flex;
+				flex-direction: column;
+				justify-content: space-between
+			}
       .text{
         text-align: center;
       }
@@ -45,10 +51,7 @@ export function dataPage() {
         width: 100%;
         display:flex;
         flex-direction: column;
-        gap:20px;
-      }
-      .button-form{
-        margin-top: 80px;
+        gap:40px;
       }
 				.datos-act{
           display: none;
@@ -63,42 +66,41 @@ export function dataPage() {
           top: 30%;
         }
       `;
-			shadow.appendChild(div);
-			shadow.appendChild(style);
+      shadow.appendChild(div);
+      shadow.appendChild(style);
 
-			//chequeamos que estamos logueados
-			const isLogin = state.checkLogin();
+      //chequeamos que estamos logueados
+      const isLogin = state.checkLogin();
 
-			const inputNombre = shadow.querySelector(".input-nombre");
-			const inputLocalidad = shadow.querySelector(".input-localidad");
-			const datosAct = shadow.querySelector(".datos-act");
+      const inputNombre = shadow.querySelector(".input-nombre");
+      const inputLocalidad = shadow.querySelector(".input-localidad");
+      const datosAct = shadow.querySelector(".datos-act");
 
-			const buttonForm = shadow.querySelector(".button-form");
-			buttonForm.addEventListener("click", (e) => {
-				e.preventDefault();
-				const nombre = inputNombre.shadowRoot.querySelector("input").value;
-				const localidad =
-					inputLocalidad.shadowRoot.querySelector("input").value;
-				if (isLogin) {
-					guardar(nombre, localidad);
-				} else {
-					state.logOut();
-				}
-			});
-			async function guardar(nombre: string, localidad: string) {
-				try {
-					const respuesta = await state.setDatesUser(nombre, localidad);
-					if (respuesta === "ok") {
-						datosAct.style.display = "inherit";
-						setTimeout(() => {
-							Router.go("/perfil");
-						}, 2000);
-					}
-				} catch (error) {
-					console.error("error al guardar", error);
-				}
-			}
-		}
-	} //guardar debe llevar a /perfil
-	customElements.define("mis-datos-page", DataPage);
+      const buttonForm = shadow.querySelector(".button-form");
+      buttonForm.addEventListener("click", (e) => {
+        e.preventDefault();
+        const nombre = inputNombre.shadowRoot.querySelector("input").value;
+        const localidad = inputLocalidad.shadowRoot.querySelector("input").value;
+        if (isLogin) {
+          guardar(nombre, localidad);
+        } else {
+          state.logOut();
+        }
+      });
+      async function guardar(nombre: string, localidad: string) {
+        try {
+          const respuesta = await state.setDatesUser(nombre, localidad);
+          if (respuesta === "ok") {
+            datosAct.style.display = "inherit";
+            setTimeout(() => {
+              Router.go("/perfil");
+            }, 2000);
+          }
+        } catch (error) {
+          console.error("error al guardar", error);
+        }
+      }
+    }
+  } //guardar debe llevar a /perfil
+  customElements.define("mis-datos-page", DataPage);
 }

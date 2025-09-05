@@ -2,37 +2,32 @@ import { state } from "../state";
 import { Router } from "@vaadin/router";
 import { getCiudadProvincia } from "../lib/map";
 export function misReportsPage() {
-	class MisReportsPage extends HTMLElement {
-		constructor() {
-			super();
-			this.render();
-		}
+  class MisReportsPage extends HTMLElement {
+    constructor() {
+      super();
+      this.render();
+    }
 
-		async render() {
-			const shadow = this.attachShadow({ mode: "open" });
-			const div = document.createElement("div");
-			const style = document.createElement("style");
-			div.classList.add("container");
-			const imagenEmptyReport = require("url:../icons/icon-misReports.png");
+    render() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const div = document.createElement("div");
+      const style = document.createElement("style");
+      div.classList.add("container");
+      const imagenEmptyReport = require("url:../icons/icon-misReports.png");
 
-			//debo obtener la ubicacion en base a las coordenadas
-			const allMyPets = state.getState().petsUser;
-			const petsWithLocation = await Promise.all(
-				allMyPets.map(async (pet) => {
-					const ubicacion = await getCiudadProvincia(pet.lat, pet.lng);
-					return { ...pet, ubicacion }; // Agregamos la ubicación al objeto de la mascota
-				})
-			);
-			div.innerHTML = `
+      //debo obtener la ubicacion en base a las coordenadas
+      const allMyPets = state.getState().petsUser;
+
+      div.innerHTML = `
 			<div class="all-reports">
         <text-comp class="text-title" variant="subtitleBold">Mascotas reportadas</text-comp>
 				<div class="container-cards">
-					${petsWithLocation
-						.map((pet) => {
-							//agregamos el id como un dato dentro del card
-							return `<card-comp class="card" data-id="${pet.petId}" petName="${pet.name}" petLocation="${pet.ubicacion}" petImgUrl ="${pet.imgUrl}" variant="edit"></card-comp>`;
-						})
-						.join("")}
+					${allMyPets
+            .map((pet) => {
+              //agregamos el id como un dato dentro del card
+              return `<card-comp class="card" data-id="${pet.petId}" petName="${pet.name}" petLocation="${pet.ubicacion}" petImgUrl ="${pet.imgUrl}" variant="edit"></card-comp>`;
+            })
+            .join("")}
 				</div>
         <div class="empty-report">
             <text-comp class="text-body" variant="subtitle">Aún no reportaste mascotas perdidas</text-comp>
@@ -41,7 +36,7 @@ export function misReportsPage() {
         <button-comp class="button" variant="blue">Nuevo reporte</button-comp>
 			</div>	    
             `;
-			style.innerHTML = `
+      style.innerHTML = `
         .container{
 				box-sizing: border-box;
         min-height: calc(100vh - 60px);
@@ -85,37 +80,37 @@ export function misReportsPage() {
 				margin-top: 20px;
         }
       `;
-			shadow.appendChild(div);
-			shadow.appendChild(style);
+      shadow.appendChild(div);
+      shadow.appendChild(style);
 
-			//verificamos si el usuario esta logueado
-			const isLogin = state.checkLogin();
+      //verificamos si el usuario esta logueado
+      const isLogin = state.checkLogin();
 
-			const emptyReport = shadow.querySelector(".empty-report");
-			const containerCards = shadow.querySelector(".container-cards");
-			if (allMyPets.length > 0) {
-				emptyReport.style.display = "none";
-				containerCards.style.display = "flex";
-			} else {
-				emptyReport.style.display = "flex";
-			}
-			//si no lo hago asi, me toma el clik solo del primer card
-			const editButtons = shadow.querySelectorAll(".card");
-			editButtons.forEach((edit) => {
-				edit.addEventListener("click", () => {
-					const petId = edit.getAttribute("data-id"); // Obtener el ID de la mascota
-					Router.go(`/edit-report/${petId}`); //enviamos el id dentro de la url
-				});
-			});
-			const reportButton = shadow.querySelector(".button");
-			reportButton.addEventListener("click", () => {
-				if (isLogin) {
-					Router.go("/report");
-				} else {
-					Router.go("/login");
-				}
-			});
-		}
-	}
-	customElements.define("mis-reports-page", MisReportsPage);
+      const emptyReport = shadow.querySelector(".empty-report");
+      const containerCards = shadow.querySelector(".container-cards");
+      if (allMyPets.length > 0) {
+        emptyReport.style.display = "none";
+        containerCards.style.display = "flex";
+      } else {
+        emptyReport.style.display = "flex";
+      }
+      //si no lo hago asi, me toma el clik solo del primer card
+      const editButtons = shadow.querySelectorAll(".card");
+      editButtons.forEach((edit) => {
+        edit.addEventListener("click", () => {
+          const petId = edit.getAttribute("data-id"); // Obtener el ID de la mascota
+          Router.go(`/edit-report/${petId}`); //enviamos el id dentro de la url
+        });
+      });
+      const reportButton = shadow.querySelector(".button");
+      reportButton.addEventListener("click", () => {
+        if (isLogin) {
+          Router.go("/report");
+        } else {
+          Router.go("/login");
+        }
+      });
+    }
+  }
+  customElements.define("mis-reports-page", MisReportsPage);
 }

@@ -18,13 +18,13 @@ export function passPage() {
 					<text-comp class="text-title" variant="title">Contraseña</text-comp>
 				</div>
 				<div class="form">
-        	<input-comp class="input-pass" type="text">CONTRASEÑA</input-comp>
-					<input-comp class="input-confirm" type="text">CONFIRMAR CONTRASEÑA</input-comp>
+        	<input-comp class="input-pass" type="password">CONTRASEÑA</input-comp>
+					<input-comp class="input-confirm" type="password">CONFIRMAR CONTRASEÑA</input-comp>
 				</div>
 					<button-comp class="button-form" variant="blue">Guardar</button-comp>
 			</div>	
         <div class="pass-act">
-          <text-comp variant="subtitle">Contraseña actualizada!</text-comp>
+          <text-comp variant="subtitle">Contraseña actualizada, vuelve a iniciar sesión!</text-comp>
         </div>
 				<div class="error-pass">
           <text-comp variant="subtitle"> Las contraseñas deben ser iguales!</text-comp>
@@ -95,7 +95,7 @@ export function passPage() {
           if (isLogin) {
             changePass(password);
           } else {
-            Router.go("/login");
+            state.logOut();
           }
         } else {
           errorPass.style.display = "inherit";
@@ -112,7 +112,7 @@ export function passPage() {
           if (respuesta === "ok") {
             passAct.style.display = "inherit";
             setTimeout(() => {
-              Router.go("/perfil");
+              state.logOut();
             }, 2000);
           } else {
             errorGral.style.display = "inherit";
