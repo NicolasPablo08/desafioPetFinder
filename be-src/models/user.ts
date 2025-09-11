@@ -3,11 +3,13 @@ import { sequelize } from "./connect";
 
 export class User extends Model {}
 User.init(
-	{
-		email: DataTypes.STRING,
-		name: DataTypes.STRING,
-		localidad: DataTypes.STRING,
-		passwordHash: DataTypes.STRING,
-	},
-	{ sequelize, modelName: "User" }
+  {
+    email: DataTypes.STRING,
+    name: DataTypes.STRING,
+    localidad: DataTypes.STRING,
+    passwordHash: DataTypes.STRING,
+    code: DataTypes.STRING,
+    timeExpireCode: DataTypes.DATE,
+  },
+  { sequelize, modelName: "User" }
 );

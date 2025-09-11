@@ -1,26 +1,26 @@
 import { state } from "../state";
 import { Router } from "@vaadin/router";
 export function headerComp() {
-	class HeaderComp extends HTMLElement {
-		shadow: ShadowRoot;
-		constructor() {
-			super();
-			this.shadow = this.attachShadow({ mode: "open" });
-		}
-		connectedCallback() {
-			this.render();
-			state.subscribe(() => {
-				this.render();
-			});
-		}
-		render() {
-			this.shadow.innerHTML = ""; // Limpiar contenido anterior
-			const div = document.createElement("div");
-			div.classList.add("header-container");
-			const style = document.createElement("style");
-			const imageSrc = require("url:../icons/icon-header.png");
-			const userMail = state.getState().user.email || "emailDelUser@gmail.com"; //remplazar con el email del usuario logueado
-			div.innerHTML = `
+  class HeaderComp extends HTMLElement {
+    shadow: ShadowRoot;
+    constructor() {
+      super();
+      this.shadow = this.attachShadow({ mode: "open" });
+    }
+    connectedCallback() {
+      this.render();
+      state.subscribe(() => {
+        this.render();
+      });
+    }
+    render() {
+      this.shadow.innerHTML = ""; // Limpiar contenido anterior
+      const div = document.createElement("div");
+      div.classList.add("header-container");
+      const style = document.createElement("style");
+      const imageSrc = require("url:../icons/icon-header.png");
+      const userMail = state.getState().user.email || "emailDelUser@gmail.com"; //remplazar con el email del usuario logueado
+      div.innerHTML = `
 			<div class= "header__logo-container">
 				<img class="logo" src=${imageSrc} alt="">
 			</div>
@@ -33,7 +33,7 @@ export function headerComp() {
 					<div class="loged">
 						<a	href="/perfil" class="option-dates text"> Mi perfil</a> 
 						<a	href="/report" class="option-report text"> Reportar mascota</a>
-						<a	href="/mis-reports" class="option-my-reports text"> Mis mascotas <br> reportadas</a>
+						<a	href="/my-reports" class="option-my-reports text"> Mis mascotas <br> reportadas</a>
 					</div>
 					<div class="not-loged">
 						<a	href="/" class="option-home text"> Home</a> 
@@ -48,7 +48,7 @@ export function headerComp() {
 				</div>	
 			</div>	
 			`;
-			style.innerHTML = `
+      style.innerHTML = `
 			.header-container {
 			padding: 0 20px;
 			max-width: 100%;
@@ -145,38 +145,38 @@ export function headerComp() {
 			}	
 			`;
 
-			this.shadow.appendChild(style);
-			this.shadow.appendChild(div);
-			const divLoged = this.shadow.querySelector(".loged");
-			const divNotLoged = this.shadow.querySelector(".not-loged");
-			const divFooter = this.shadow.querySelector(".option-footer");
-			if (state.checkLogin()) {
-				divLoged.style.display = "flex";
-				divFooter.style.display = "flex";
-			} else {
-				divNotLoged.style.display = "flex";
-			}
+      this.shadow.appendChild(style);
+      this.shadow.appendChild(div);
+      const divLoged = this.shadow.querySelector(".loged");
+      const divNotLoged = this.shadow.querySelector(".not-loged");
+      const divFooter = this.shadow.querySelector(".option-footer");
+      if (state.checkLogin()) {
+        divLoged.style.display = "flex";
+        divFooter.style.display = "flex";
+      } else {
+        divNotLoged.style.display = "flex";
+      }
 
-			const btnLogout = this.shadow.querySelector(".option-logout");
-			const btnMenuOpen = this.shadow.querySelector(".menu__button-open");
-			const menuWindow = this.shadow.querySelector(".menu-window");
-			const btnMenuClose = this.shadow.querySelector(".menu__button-close");
-			btnMenuClose.addEventListener("click", () => {
-				menuWindow.style.display = "none";
-			});
-			btnMenuOpen.addEventListener("click", () => {
-				menuWindow.style.display = "flex";
-			});
-			btnLogout.addEventListener("click", (e) => {
-				e.preventDefault();
-				state.logOut();
-			});
-			menuWindow.addEventListener("click", (e) => {
-				if (e.target.tagName === "A") {
-					menuWindow.style.display = "none"; // cerrás el menú
-				}
-			});
-		}
-	}
-	customElements.define("header-comp", HeaderComp);
+      const btnLogout = this.shadow.querySelector(".option-logout");
+      const btnMenuOpen = this.shadow.querySelector(".menu__button-open");
+      const menuWindow = this.shadow.querySelector(".menu-window");
+      const btnMenuClose = this.shadow.querySelector(".menu__button-close");
+      btnMenuClose.addEventListener("click", () => {
+        menuWindow.style.display = "none";
+      });
+      btnMenuOpen.addEventListener("click", () => {
+        menuWindow.style.display = "flex";
+      });
+      btnLogout.addEventListener("click", (e) => {
+        e.preventDefault();
+        state.logOut();
+      });
+      menuWindow.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") {
+          menuWindow.style.display = "none"; // cerrás el menú
+        }
+      });
+    }
+  }
+  customElements.define("header-comp", HeaderComp);
 }

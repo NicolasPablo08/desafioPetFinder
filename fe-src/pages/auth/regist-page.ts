@@ -28,12 +28,8 @@ export function registPage() {
         </div>
 				<button-comp class="button-form" variant="blue">Siguiente</button-comp>
 			</div>	
-        <div class="error-email">
-          <text-comp variant="subtitle">El email ingresado ya se encuentra registrado!</text-comp>
-        </div>
-        <div class="error-pass">
-          <text-comp variant="subtitle"> Las contraseñas deben ser iguales!</text-comp>
-        </div>
+        <message-comp class="message-comp"></message-comp>
+        <load-comp class="load-comp"></load-comp>
         
         
 			`;
@@ -80,19 +76,22 @@ export function registPage() {
         font-family: "Roboto";
         text-align: center;
       }
-      
-        .error-email, .error-pass{
-          display: none;
-          width: 300px;
-          height:200px;
-          text-align: center;
-          align-items: center;
-          position: absolute;
-          background-color: white;
-          border-radius: 10px;
-          border:solid 2px black;
-          top: 30%;
-        }
+      .message-comp{
+        display: none;
+        position: fixed; /* Fija la posición en la pantalla */
+        top: 50%; /* Centra verticalmente */
+        left: 50%; /* Centra horizontalmente */
+        transform: translate(-50%, -50%); /* Ajusta el centro */
+        z-index: 999; /* Asegura que este por encima de otros elementos */
+      }
+      .load-comp{
+        display: none;
+        position: fixed; /* Fija la posición en la pantalla */
+        top: 50%; /* Centra verticalmente */
+        left: 50%; /* Centra horizontalmente */
+        transform: translate(-50%, -50%); /* Ajusta el centro */
+        z-index: 999;
+      }    
       `;
       shadow.appendChild(div);
       shadow.appendChild(style);
@@ -100,8 +99,9 @@ export function registPage() {
       const inputEmail = shadow.querySelector(".input-email");
       const inputPass = shadow.querySelector(".input-pass");
       const inputPassConfirm = shadow.querySelector(".input-pass-confirm");
-      const errorEmail = shadow.querySelector(".error-email");
-      const errorPass = shadow.querySelector(".error-pass");
+      const registContainer = shadow.querySelector(".regist");
+      const loadComp = shadow.querySelector(".load-comp");
+      const messageComp = shadow.querySelector(".message-comp");
 
       const buttonForm = shadow.querySelector(".button-form");
       buttonForm.addEventListener("click", (e) => {
@@ -112,28 +112,50 @@ export function registPage() {
         if (password === passwordConfirm) {
           registUser(email, password);
         } else {
-          errorPass.style.display = "inherit";
+          messageComp.textContent = "Las contraseñas ingresadas deben ser iguales";
+          messageComp.style.display = "inherit";
           setTimeout(() => {
-            errorPass.style.display = "none";
+            messageComp.style.display = "none";
           }, 3000); //para que el cartel este 3 segundos y desaparezca
         }
       });
       async function registUser(email: string, password: string) {
+        registContainer.style.filter = "blur(5px)";
+        loadComp.style.display = "inherit";
         try {
-          const respuesta = await state.createUser(email, password);
-          if (respuesta === "email ya registrado") {
-            errorEmail.style.display = "inherit";
+          const response = await state.createUser(email, password);
+          if (response.status === "warning") {
+            registContainer.style.filter = "none";
+            loadComp.style.display = "none";
+            messageComp.textContent = response.message;
+            messageComp.style.display = "inherit";
             inputEmail.shadowRoot.querySelector("input").value = "";
             inputPass.shadowRoot.querySelector("input").value = "";
             inputPassConfirm.shadowRoot.querySelector("input").value = "";
             setTimeout(() => {
-              errorEmail.style.display = "none";
-            }, 3000); //para que el cartel este 3 segundos y desaparezca
-          } else if (respuesta === "ok") {
-            Router.go("/datos");
+              messageComp.style.display = "none";
+            }, 4000); //para que el cartel este 3 segundos y desaparezca
+          } else if (response.status === "success") {
+            registContainer.style.filter = "none";
+            loadComp.style.display = "none";
+            messageComp.textContent = response.message;
+            messageComp.style.display = "inherit";
+            setTimeout(() => {
+              messageComp.style.display = "none";
+              Router.go("/data");
+            }, 4000); //para que el cartel este 3 segundos y desaparezca
+          } else {
+            registContainer.style.filter = "none";
+            loadComp.style.display = "none";
+            messageComp.textContent = "Error, vuelve a intentarlo mas tarde";
+            messageComp.style.display = "inherit";
+            setTimeout(() => {
+              Router.go("/");
+            }, 4000); //para que el cartel este 3 segundos y desaparezca
           }
         } catch (error) {
-          console.error("error en login", error);
+          console.error("error en la funcion registUser de la page regist", error);
+          Router.go("/");
         }
       }
     }

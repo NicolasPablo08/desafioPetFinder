@@ -1,8 +1,8 @@
 import { state } from "../state";
 import { Router } from "@vaadin/router";
 import { getCiudadProvincia } from "../lib/map";
-export function misReportsPage() {
-  class MisReportsPage extends HTMLElement {
+export function myReportsPage() {
+  class MyReportsPage extends HTMLElement {
     constructor() {
       super();
       this.render();
@@ -112,5 +112,5 @@ export function misReportsPage() {
       });
     }
   }
-  customElements.define("mis-reports-page", MisReportsPage);
+  customElements.define("my-reports-page", MyReportsPage);
 }

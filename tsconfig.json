@@ -1,8 +1,8 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "esnext",
-		"outDir": "be-dist"
-	},
-	"includes": ["be-src/**/*.ts"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "outDir": "be-dist"
+  },
+  "include": ["be-src/**/*.ts"]
 }

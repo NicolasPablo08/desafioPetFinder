@@ -2,10 +2,12 @@
   "name": "desafiopetfinder",
   "version": "1.0.0",
   "scripts": {
-    "dev:be": "nodemon --watch ./be-src/server.ts --exec ts-node ./be-src/server.ts",
     "dev:fe": "parcel serve ./fe-src/index.html",
-    "dev": "nodemon --exec ts-node dev.ts",
-    "sync": "ts-node ./be-src/models/sync.ts"
+    "dev:be": "nodemon --exec ts-node dev.ts",
+    "sync": "ts-node ./be-src/models/sync.ts",
+    "build:fe": "parcel build fe-src/index.html --no-cache --dist-dir dist",
+    "build:be": "tsc",
+    "start:be": "node be-dist/server.js"
   },
   "keywords": [],
   "author": "",

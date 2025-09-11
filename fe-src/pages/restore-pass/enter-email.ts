@@ -1,7 +1,7 @@
 import { state } from "../../state";
 import { Router } from "@vaadin/router";
-export function loginPage() {
-  class LoginPage extends HTMLElement {
+export function enterEmailPage() {
+  class EnterEmailPage extends HTMLElement {
     constructor() {
       super();
       this.render();
@@ -12,28 +12,21 @@ export function loginPage() {
       const style = document.createElement("style");
       div.classList.add("container");
       div.innerHTML = `
-      <div class="login">
-				<div class="text">
-					<text-comp class="text-title" variant="title">Iniciar Sesión</text-comp>		
-					<text-comp class="text-body" variant="subtitle">Ingresá los siguientes datos para iniciar sesión</text-comp>
-				</div>
-				<div class="form">
-        	<input-comp class="input-email" type="email">EMAIL</input-comp>
-					<input-comp class="input-pass" type="password">CONTRASEÑA</input-comp>
+      <div class="data">
+        <div class="text">
+          <text-comp class="text-title" variant="title">Restablecer Contraseña</text-comp>		
+          <text-comp class="text-body" variant="subtitle">Ingresá tu email registrado, te enviaremos un codigo de verificacion para recuperar tu contraseña.</text-comp>
         </div>
-        <div class="links">
-          <a class="text-footer" href="/restore-pass"> Olvidé mi contraseña</a>
-          <div class="inint-regist">
-            <text-comp  variant="text">Aun no tenés cuenta?</text-comp> 
-            <a class="text-footer" href="./regist"> Registrate</a>
-          </div>
+          <input-comp class="input-email" type="email">EMAIL</input-comp>
+        <div class="buttons">
+          <button-comp class="button-form" variant="blue">Enviar código</button-comp>
+          <button-comp class="button-back" variant="blue">Volver</button-comp>
         </div>  
-					<button-comp class="button-form" variant="blue">Acceder</button-comp>
       </div>  
         <message-comp class="message-comp"></message-comp>
         <load-comp class="load-comp"></load-comp>
 
-			`;
+      `;
       style.innerHTML = `
       .container{
         box-sizing: border-box;
@@ -45,7 +38,7 @@ export function loginPage() {
         justify-content: center;
         position: relative;
       }
-      .login{
+      .data{
         max-width: 550px;	
         height: 100%;
         display: flex;
@@ -59,31 +52,13 @@ export function loginPage() {
         flex-direction: column;
         gap:30px;
       }
-      .form{
+      .buttons{
         width: 100%;
         display:flex;
         flex-direction: column;
-        gap:30px;
+        gap:20px;
       }
-       .links{
-        display:flex;
-        flex-direction: column;
-        gap:25px;
-      } 
-      .text-footer{
-        margin:0;
-        color:#5A8FEC;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 400;
-        font-family: "Roboto";
-        text-align: center;
-      }
-      .inint-regist{
-        display: flex;
-        justify-content: center;
-        gap:5px;
-      } 
+       
       .message-comp{
         display: none;
         position: fixed; /* Fija la posición en la pantalla */
@@ -105,53 +80,53 @@ export function loginPage() {
       shadow.appendChild(style);
 
       const inputEmail = shadow.querySelector(".input-email");
-      const inputPass = shadow.querySelector(".input-pass");
       const messageComp = shadow.querySelector(".message-comp");
       const loadComp = shadow.querySelector(".load-comp");
-      const loginContainer = shadow.querySelector(".login");
-
+      const dataContainer = shadow.querySelector(".data");
       const buttonForm = shadow.querySelector(".button-form");
+      const buttonBack = shadow.querySelector(".button-back");
+      buttonBack.addEventListener("click", (e) => {
+        e.preventDefault();
+        Router.go("/login");
+      });
+
       buttonForm.addEventListener("click", async (e) => {
         e.preventDefault();
         const email = inputEmail.shadowRoot.querySelector("input").value;
-        const password = inputPass.shadowRoot.querySelector("input").value;
-        loginContainer.style.filter = "blur(5px)";
+        dataContainer.style.filter = "blur(5px)";
         loadComp.style.display = "inherit";
-        const resp = await login(email, password);
-        if (resp.status === "success") {
-          Router.go("/perfil");
-        } else if (resp.status === "warning") {
-          loginContainer.style.filter = "none";
+        const response = await getCode(email);
+        if (response.status === "success") {
+          Router.go("/send-code");
+        } else if (response.status === "warning") {
+          dataContainer.style.filter = "none";
           loadComp.style.display = "none";
           messageComp.style.display = "inherit";
-          messageComp.textContent = resp.message;
+          messageComp.textContent = response.message;
           inputEmail.shadowRoot.querySelector("input").value = "";
-          inputPass.shadowRoot.querySelector("input").value = "";
           setTimeout(() => {
             messageComp.style.display = "none";
           }, 4000);
         } else {
-          loginContainer.style.filter = "none";
+          dataContainer.style.filter = "none";
           loadComp.style.display = "none";
           messageComp.style.display = "inherit";
-          messageComp.textContent = "Error, vuelve a intentarlo mas tarde";
-
+          messageComp.textContent = "Hubo un error, intenta nuevamente mas tarde";
           setTimeout(() => {
-            messageComp.style.display = "none";
-            Router.go("/");
-          }, 4000); //para que el cartel este 3 segundos y desaparezca
-        } //tal ves crear un else general que genere una ventana con "credenciales incorrectas" o "vuelve a intentar mas tarde"
+            Router.go("/login");
+          }, 4000);
+        }
       });
-      async function login(email: string, password: string) {
+      async function getCode(email: string) {
         try {
-          const response = await state.logIn(email, password);
+          const response = await state.getCode(email); //hacer funcion en state/server/userController para obtener el codigo de verificacion
           return response;
         } catch (error) {
-          console.error("error en la funcion login de la page login", error);
-          Router.go("/");
+          console.error("error en la funcion getCode de la page enter-email", error);
+          return { status: "error" };
         }
       }
     }
   }
-  customElements.define("login-page", LoginPage);
+  customElements.define("enter-email-page", EnterEmailPage);
 }
