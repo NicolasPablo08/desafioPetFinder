@@ -173,6 +173,8 @@ export async function createCode(email: string) {
 		}
 		//utilizamos transporter de la libreria nomadelier que nos permite enviar emails
 		console.log("Enviando mail...");
+		console.log(process.env.EMAIL_USER);
+
 		const data = await transporter.sendMail({
 			from: `"mascotas perdidas" <${process.env.EMAIL_USER}>`,
 			to: email,
