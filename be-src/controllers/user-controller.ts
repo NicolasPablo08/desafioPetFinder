@@ -1,7 +1,7 @@
 import { User, Pet } from "../models/index";
 import * as bcrypt from "bcrypt"; //nuevo algoritmo para hashear password, mas seguro que "crypto"
 import * as jwt from "jsonwebtoken";
-import { transporter } from "../lib/nodemailer";
+import { sendEmailCode } from "../lib/sendgrid";
 import "dotenv/config";
 
 //cracion del hash para el password
@@ -147,9 +147,7 @@ export async function createCode(email: string) {
 		return { status: "error" };
 	}
 	try {
-		console.log("Buscando usuario en la DB...");
 		const res = await User.findOne({ where: { email } });
-		console.log("Usuario encontrado:", res);
 
 		if (!res) {
 			return {
@@ -172,27 +170,8 @@ export async function createCode(email: string) {
 			return { status: "error" };
 		}
 		//utilizamos transporter de la libreria nomadelier que nos permite enviar emails
-		console.log("Enviando mail...");
-		console.log(process.env.EMAIL_USER);
-
-		const data = await transporter.sendMail({
-			from: `"mascotas perdidas" <${process.env.EMAIL_USER}>`,
-			to: email,
-			subject: `Codigo de verificación "Mascotas Perdidas"`,
-			text: `Ingresa el siguiente codigo de verificacion en la app para restaurar tu contraseña: ${code}.`,
-		});
-		console.log("Mail enviado:", data);
-		if (data.rejected.length > 0) {
-			return {
-				status: "warning",
-				message: "No se pudo enviar el codigo, intenta mas tarde!",
-			};
-		}
-		return {
-			status: "success",
-			message:
-				"El codigo fue enviado a tu email, revisa tu bandeja de entrada!",
-		};
+		const result = await sendEmailCode(email, code);
+		return result;
 	} catch (error) {
 		console.error("Error en la funcion createCode del userController", error);
 		return { status: "error" };

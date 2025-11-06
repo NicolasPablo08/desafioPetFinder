@@ -16,6 +16,7 @@
 	"description": "",
 	"dependencies": {
 		"@react-email/render": "^1.2.1",
+		"@sendgrid/mail": "^8.1.6",
 		"@vaadin/router": "^2.0.0",
 		"algoliasearch": "^5.35.0",
 		"bcrypt": "^6.0.0",

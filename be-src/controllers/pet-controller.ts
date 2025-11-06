@@ -1,7 +1,7 @@
 import { User, Pet } from "../models/index";
 import cloudinary from "../lib/cloudinary";
 import { client } from "../lib/algolia";
-import { transporter } from "../lib/nodemailer";
+import { sendEmailReport } from "../lib/sendgrid";
 
 //crear nuevo reporte de una mascota vinculada a un usuario
 export async function createReport(
@@ -264,22 +264,14 @@ export async function sendEmail(
 	}
 	try {
 		//utilizamos transporter de la libreria nomadelier que nos permite enviar emails
-		const data = await transporter.sendMail({
-			from: `"mascotas perdidas" <${process.env.EMAIL_USER}>`,
-			to: email,
-			subject: `He visto a ${namePet}`,
-			text: `Hola, soy ${nombre}. ${informacion}. Puedes contactarme al ${telefono}.`,
-		});
-		if (data.rejected.length > 0) {
-			return {
-				status: "warning",
-				message: "No se pudo enviar el mensaje, intenta mas tarde!",
-			};
-		}
-		return {
-			status: "success",
-			message: "Mensaje enviado, gracias por ayudar a encontrar una mascota!",
-		};
+		const result = await sendEmailReport(
+			email,
+			namePet,
+			nombre,
+			informacion,
+			telefono
+		);
+		return result;
 	} catch (error) {
 		console.error("Error en la funcion sendEmail del petController", error);
 		return { status: "error" };
