@@ -147,7 +147,10 @@ export async function createCode(email: string) {
 		return { status: "error" };
 	}
 	try {
+		console.log("Buscando usuario en la DB...");
 		const res = await User.findOne({ where: { email } });
+		console.log("Usuario encontrado:", res);
+
 		if (!res) {
 			return {
 				status: "warning",
@@ -169,12 +172,14 @@ export async function createCode(email: string) {
 			return { status: "error" };
 		}
 		//utilizamos transporter de la libreria nomadelier que nos permite enviar emails
+		console.log("Enviando mail...");
 		const data = await transporter.sendMail({
 			from: `"mascotas perdidas" <${process.env.EMAIL_USER}>`,
 			to: email,
 			subject: `Codigo de verificación "Mascotas Perdidas"`,
 			text: `Ingresa el siguiente codigo de verificacion en la app para restaurar tu contraseña: ${code}.`,
 		});
+		console.log("Mail enviado:", data);
 		if (data.rejected.length > 0) {
 			return {
 				status: "warning",
