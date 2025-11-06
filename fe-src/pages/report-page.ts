@@ -5,20 +5,20 @@ import { initMap, obtainCoords } from "../lib/map";
 import "leaflet/dist/leaflet.css"; //importamos estilos propios de leaflet
 
 export function reportPage() {
-  class ReportPage extends HTMLElement {
-    dropzone: any;
-    constructor() {
-      super();
-      this.dropzone = null; // Inicializar la variable para Dropzone
-      this.render();
-    }
-    render() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const div = document.createElement("div");
-      const style = document.createElement("style");
-      div.classList.add("container");
-      const imagen = require("url:../icons/icon-img.png");
-      div.innerHTML = `
+	class ReportPage extends HTMLElement {
+		dropzone: any;
+		constructor() {
+			super();
+			this.dropzone = null; // Inicializar la variable para Dropzone
+			this.render();
+		}
+		render() {
+			const shadow = this.attachShadow({ mode: "open" });
+			const div = document.createElement("div");
+			const style = document.createElement("style");
+			div.classList.add("container");
+			const imagen = require("url:../icons/icon-img.png");
+			div.innerHTML = `
 			<div class= "report">
 				<div class="text">
 					<text-comp class="text-title" variant="title">Reportar mascota</text-comp>		
@@ -44,7 +44,7 @@ export function reportPage() {
 
         
 			`;
-      style.innerHTML = `
+			style.innerHTML = `
       .container{
 			box-sizing: border-box;
         min-height: calc(100vh - 60px);
@@ -107,126 +107,141 @@ export function reportPage() {
       }
       `;
 
-      //agregamos el estilo de leaflet al shadow (en ejercicio anterior lo agregamos al html)
-      const leafletStyle = document.createElement("style");
-      leafletStyle.textContent = `
+			//agregamos el estilo de leaflet al shadow (en ejercicio anterior lo agregamos al html)
+			const leafletStyle = document.createElement("style");
+			leafletStyle.textContent = `
         @import url("https://unpkg.com/leaflet/dist/leaflet.css");
       `;
-      shadow.appendChild(leafletStyle);
+			shadow.appendChild(leafletStyle);
 
-      shadow.appendChild(div);
-      shadow.appendChild(style);
-      //chequeo si estoy logueado
-      const isLogin = state.checkLogin();
+			shadow.appendChild(div);
+			shadow.appendChild(style);
+			//chequeo si estoy logueado
+			const isLogin = state.checkLogin();
 
-      const buttonImg = shadow.querySelector(".button-img");
-      const buttonReport = shadow.querySelector(".button-report");
-      const buttonCancel = shadow.querySelector(".button-cancel");
-      const messageComp = shadow.querySelector(".message-comp");
-      const loadComp = shadow.querySelector(".load-comp");
-      const reportContainer = shadow.querySelector(".report");
+			const buttonImg = shadow.querySelector(".button-img");
+			const buttonReport = shadow.querySelector(".button-report");
+			const buttonCancel = shadow.querySelector(".button-cancel");
+			const messageComp = shadow.querySelector(".message-comp");
+			const loadComp = shadow.querySelector(".load-comp");
+			const reportContainer = shadow.querySelector(".report");
 
-      //funcion para inicializar el mapa
-      let map;
-      const containerMap = div.querySelector(".mapa");
-      if (containerMap) {
-        map = initMap(containerMap);
-      }
-      //buscamos la ubicacion para obtener las coordenadas, utilizamos
-      //la opcion de keydown para que se envie el input al presionar enter
-      //ya que no hay boton de buscar
-      const inputUbicacion = shadow.querySelector(".input-ubicacion");
-      inputUbicacion.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          const ubicacionValue = shadow
-            .querySelector(".input-ubicacion")
-            .shadowRoot.querySelector("input").value;
-          obtainCoords(ubicacionValue, map);
-        }
-      });
+			//funcion para inicializar el mapa
+			let map;
+			const containerMap = div.querySelector(".mapa");
+			if (containerMap) {
+				map = initMap(containerMap);
+			}
+			//buscamos la ubicacion para obtener las coordenadas, utilizamos
+			//la opcion de keydown para que se envie el input al presionar enter
+			//ya que no hay boton de buscar
+			const inputUbicacion = shadow.querySelector(".input-ubicacion");
+			inputUbicacion.addEventListener("keydown", (e) => {
+				if (e.key === "Enter") {
+					const ubicacionValue = shadow
+						.querySelector(".input-ubicacion")
+						.shadowRoot.querySelector("input").value;
+					obtainCoords(ubicacionValue, map);
+				}
+			});
 
-      // Inicializar Dropzone una vez
-      this.initDropzone(shadow);
-      buttonImg.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.dropzone.hiddenFileInput.click(); // Abre el selector de archivos
-      });
+			// Inicializar Dropzone una vez
+			this.initDropzone(shadow);
+			buttonImg.addEventListener("click", (e) => {
+				e.preventDefault();
+				this.dropzone.hiddenFileInput.click(); // Abre el selector de archivos
+			});
 
-      //boton cancelar
-      buttonCancel.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (isLogin) {
-          Router.go("/my-reports");
-        } else {
-          Router.go("/login");
-        }
-      });
+			//boton cancelar
+			buttonCancel.addEventListener("click", (e) => {
+				e.preventDefault();
+				if (isLogin) {
+					Router.go("/my-reports");
+				} else {
+					Router.go("/login");
+				}
+			});
 
-      //crear reporte con todos los datos
-      let lat;
-      let lng;
-      containerMap.addEventListener("location-selected", (e) => {
-        lat = e.detail.lat;
-        lng = e.detail.lng;
-      });
+			//crear reporte con todos los datos
+			let lat;
+			let lng;
+			containerMap.addEventListener("location-selected", (e) => {
+				lat = e.detail.lat;
+				lng = e.detail.lng;
+			});
 
-      buttonReport.addEventListener("click", (e) => {
-        e.preventDefault();
-        const name = shadow.querySelector(".input-nombre").shadowRoot.querySelector("input").value;
-        const imgUrl = shadow.querySelector(".img").src;
-        if (!name || !lat || !lng || !imgUrl || imgUrl == imagen)
-          return console.log("Faltan campos por completar, todos los campos son obligatorios");
-        if (isLogin) {
-          newReport(name, imgUrl, lat, lng);
-        } else {
-          Router.go("/login");
-        }
-      });
-      async function newReport(name: string, imgUrl: string, lat: number, lng: number) {
-        reportContainer.style.filter = "blur(5px)";
-        loadComp.style.display = "inherit";
-        try {
-          const response = await state.createPetReport(name, imgUrl, lat, lng);
-          if (response.status === "success") {
-            reportContainer.style.filter = "none";
-            loadComp.style.display = "none";
-            messageComp.style.display = "inherit";
-            messageComp.textContent = response.message;
-            setTimeout(() => {
-              Router.go("/my-reports");
-            }, 4000);
-          } else {
-            reportContainer.style.filter = "none";
-            loadComp.style.display = "none";
-            messageComp.style.display = "inherit";
-            messageComp.textContent = "Error al publicar tu mascota, intenta mas tarde";
-            setTimeout(() => {
-              Router.go("/my-reports");
-            }, 4000);
-          }
-        } catch (error) {
-          console.error("error en la funcion newReport de la page report", error);
-          state.logOut();
-        }
-      }
-    }
-    initDropzone(shadow) {
-      const dropzzoneElement = shadow.querySelector(".dropzone-container");
-      const previewImg = shadow.querySelector(".img");
-      this.dropzone = new Dropzone(dropzzoneElement, {
-        url: "/false",
-        autoProcessQueue: false,
-        dictDefaultMessage: "", // quita el texto por defecto
-        previewsContainer: false, // evita que cree el contenedor de previews
-        maxFiles: 1,
-        thumbnail: function (file, dataUrl) {
-          previewImg.src = dataUrl;
-          previewImg.style.width = "100%";
-          previewImg.style.height = "100%";
-          previewImg.style.objectFit = "cover";
-        },
-      });
-    }
-  }
-  customElements.define("report-page", ReportPage);
+			buttonReport.addEventListener("click", (e) => {
+				e.preventDefault();
+				const name = shadow
+					.querySelector(".input-nombre")
+					.shadowRoot.querySelector("input").value;
+				const imgUrl = shadow.querySelector(".img").src;
+				if (!name || !lat || !lng || !imgUrl || imgUrl == imagen)
+					return console.log(
+						"Faltan campos por completar, todos los campos son obligatorios"
+					);
+				if (isLogin) {
+					newReport(name, imgUrl, lat, lng);
+				} else {
+					Router.go("/login");
+				}
+			});
+			async function newReport(
+				name: string,
+				imgUrl: string,
+				lat: number,
+				lng: number
+			) {
+				reportContainer.style.filter = "blur(5px)";
+				loadComp.style.display = "inherit";
+				console.log(imgUrl);
+
+				try {
+					const response = await state.createPetReport(name, imgUrl, lat, lng);
+					if (response.status === "success") {
+						reportContainer.style.filter = "none";
+						loadComp.style.display = "none";
+						messageComp.style.display = "inherit";
+						messageComp.textContent = response.message;
+						setTimeout(() => {
+							Router.go("/my-reports");
+						}, 4000);
+					} else {
+						reportContainer.style.filter = "none";
+						loadComp.style.display = "none";
+						messageComp.style.display = "inherit";
+						messageComp.textContent =
+							"Error al publicar tu mascota, intenta mas tarde";
+						setTimeout(() => {
+							Router.go("/my-reports");
+						}, 4000);
+					}
+				} catch (error) {
+					console.error(
+						"error en la funcion newReport de la page report",
+						error
+					);
+					state.logOut();
+				}
+			}
+		}
+		initDropzone(shadow) {
+			const dropzzoneElement = shadow.querySelector(".dropzone-container");
+			const previewImg = shadow.querySelector(".img");
+			this.dropzone = new Dropzone(dropzzoneElement, {
+				url: "/false",
+				autoProcessQueue: false,
+				dictDefaultMessage: "", // quita el texto por defecto
+				previewsContainer: false, // evita que cree el contenedor de previews
+				maxFiles: 1,
+				thumbnail: function (file, dataUrl) {
+					previewImg.src = dataUrl;
+					previewImg.style.width = "100%";
+					previewImg.style.height = "100%";
+					previewImg.style.objectFit = "cover";
+				},
+			});
+		}
+	}
+	customElements.define("report-page", ReportPage);
 }
